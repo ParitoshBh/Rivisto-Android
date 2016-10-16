@@ -45,16 +45,6 @@ public class SearchActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            new searchNotes().execute(query.trim().toLowerCase());
-        }
-    }
-
     private class searchNotes extends AsyncTask<String, Void, Boolean> {
         @Override
         protected Boolean doInBackground(String... query) {
