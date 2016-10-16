@@ -34,18 +34,15 @@
             android:inputType="text"
             android:maxLines="2" />
 
-        <include
-            android:id="@+id/richEditingOptions"
-            layout="@layout/rich_editing_options" />
-
-        <jp.wasabeef.richeditor.RichEditor
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+        <EditText
             android:id="@+id/openNoteContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/richEditingOptions"
-            android:layout_marginTop="5dp" />
+            android:layout_below="@+id/openNoteTitle"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:gravity="start" />
 
     </RelativeLayout>
 
