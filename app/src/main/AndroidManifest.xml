@@ -30,6 +30,12 @@
             android:label="Settings"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".TrashActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="Trashed Notes"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
         <activity android:name=".SearchActivity"
             android:parentActivityName=".MainActivity"
             android:label="Search Results"

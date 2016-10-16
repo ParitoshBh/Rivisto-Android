@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,14 +15,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import jp.wasabeef.richeditor.RichEditor;
-
 public class OpenNoteActivity extends AppCompatActivity {
     private DatabaseReference firebaseRef;
     private FirebaseDatabase firebaseDatabase;
-    private RichEditor noteContent;
-    private EditText noteTitle;
-    private String noteKey;
+    private EditText noteTitle, noteContent;
+    private String noteKey, noteLookup;
     private boolean isNewNote;
 
     @Override
@@ -35,10 +31,10 @@ public class OpenNoteActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         noteTitle = (EditText) findViewById(R.id.openNoteTitle);
-        noteContent = (RichEditor) findViewById(R.id.openNoteContent);
-        noteContent.setEditorFontSize(14);
+        noteContent = (EditText) findViewById(R.id.openNoteContent);
 
         noteKey = getIntent().getStringExtra("key");
+        noteLookup = getIntent().getStringExtra("lookup");
 
         FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
         firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
@@ -50,7 +46,14 @@ public class OpenNoteActivity extends AppCompatActivity {
         } else {
             isNewNote = false;
 
-            firebaseRef = firebaseDatabase.getReference("/notes/" + noteKey);
+            if (noteLookup.equalsIgnoreCase("trash")){
+                noteTitle.setEnabled(false);
+                noteContent.setEnabled(false);
+
+                firebaseRef = firebaseDatabase.getReference("/trash/" + noteKey);
+            } else if (noteLookup.equalsIgnoreCase("notes")){
+                firebaseRef = firebaseDatabase.getReference("/notes/" + noteKey);
+            }
 
             ValueEventListener newNoteListener = new ValueEventListener() {
                 @Override
@@ -58,7 +61,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                     // Get Post object and use the values to update the UI
                     Note note = dataSnapshot.getValue(Note.class);
                     noteTitle.setText(note.getTitle());
-                    noteContent.setHtml(note.getContent());
+                    noteContent.setText(note.getContent());
                 }
 
                 @Override
@@ -69,8 +72,6 @@ public class OpenNoteActivity extends AppCompatActivity {
             };
             firebaseRef.addListenerForSingleValueEvent(newNoteListener);
         }
-
-        setupRichTextEditorOptions();
 
     }
 
@@ -112,7 +113,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         firebaseRef.child(newNoteKey)
                 .setValue(new Note(
                         noteTitle.getText().toString(),
-                        noteContent.getHtml(),
+                        noteContent.getText().toString(),
                         "Android",
                         1476044575974L
                 ));
@@ -128,7 +129,7 @@ public class OpenNoteActivity extends AppCompatActivity {
     }
 
     private void updateNote() {
-        firebaseRef.setValue(new Note(noteTitle.getText().toString(), noteContent.getHtml(), "Android", 1476044575974L));
+        firebaseRef.setValue(new Note(noteTitle.getText().toString(), noteContent.getText().toString(), "Android", 1476044575974L));
     }
 
     private void moveNoteToTrash() {
@@ -156,70 +157,5 @@ public class OpenNoteActivity extends AppCompatActivity {
             }
         };
         firebaseRef.addListenerForSingleValueEvent(newNoteListener);
-    }
-
-    private void setupRichTextEditorOptions() {
-        findViewById(R.id.action_bold).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                noteContent.setBold();
-            }
-        });
-
-        findViewById(R.id.action_italic).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                noteContent.setItalic();
-            }
-        });
-
-        findViewById(R.id.action_strikethrough).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                noteContent.setStrikeThrough();
-            }
-        });
-
-        findViewById(R.id.action_underline).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                noteContent.setUnderline();
-            }
-        });
-
-        findViewById(R.id.action_align_left).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                noteContent.setAlignLeft();
-            }
-        });
-
-        findViewById(R.id.action_align_center).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                noteContent.setAlignCenter();
-            }
-        });
-
-        findViewById(R.id.action_align_right).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                noteContent.setAlignRight();
-            }
-        });
-
-        findViewById(R.id.action_insert_bullets).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                noteContent.setBullets();
-            }
-        });
-
-        findViewById(R.id.action_insert_numbers).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                noteContent.setNumbers();
-            }
-        });
     }
 }

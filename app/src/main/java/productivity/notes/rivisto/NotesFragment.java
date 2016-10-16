@@ -81,6 +81,10 @@ public class NotesFragment extends Fragment {
                 Intent openSettingsIntent = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(openSettingsIntent);
                 break;
+            case R.id.action_view_trash:
+                Intent openTrashIntent = new Intent(getActivity(), TrashActivity.class);
+                startActivity(openTrashIntent);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -108,6 +112,7 @@ public class NotesFragment extends Fragment {
                         public void onClick(View view) {
                             Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
                             openNoteIntent.putExtra("key", adapter.getRef(position).getKey());
+                            openNoteIntent.putExtra("lookup", "notes");
                             startActivity(openNoteIntent);
                         }
                     });
