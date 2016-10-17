@@ -78,7 +78,12 @@ public class OpenNoteActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_open_note, menu);
+        if (getIntent().getStringExtra("lookup").equalsIgnoreCase("trash")){
+            getMenuInflater().inflate(R.menu.menu_open_trash_note, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.menu_open_note, menu);
+        }
+
         return true;
     }
 
@@ -86,23 +91,35 @@ public class OpenNoteActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_save_note) {
-            if (isNewNote) {
-                createNewNote();
-                Toast.makeText(this, "Note created", Toast.LENGTH_SHORT).show();
-            } else {
-                updateNote();
-                Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        } else if (id == R.id.action_delete_note) {
-            if (isNewNote) {
-                Toast.makeText(this, "Note discarded", Toast.LENGTH_SHORT).show();
-            } else {
-                moveNoteToTrash();
-                Toast.makeText(this, "Note moved to trash", Toast.LENGTH_SHORT).show();
-            }
-            finish();
+        switch (id){
+            case R.id.action_save_note:
+                if (isNewNote) {
+                    createNewNote();
+                    Toast.makeText(this, "Note created", Toast.LENGTH_SHORT).show();
+                } else {
+                    updateNote();
+                    Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.action_delete_note:
+                if (isNewNote) {
+                    Toast.makeText(this, "Note discarded", Toast.LENGTH_SHORT).show();
+                } else {
+                    moveNoteToTrash();
+                    Toast.makeText(this, "Note moved to trash", Toast.LENGTH_SHORT).show();
+                }
+                finish();
+                break;
+            case R.id.action_restore_note:
+                restoreNote();
+                Toast.makeText(this, "Note restored", Toast.LENGTH_SHORT).show();
+                finish();
+                break;
+            case R.id.action_permanent_delete_note:
+                permanentlyDeleteNote();
+                Toast.makeText(this, "Note deleted permanently", Toast.LENGTH_SHORT).show();
+                finish();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -158,4 +175,36 @@ public class OpenNoteActivity extends AppCompatActivity {
         };
         firebaseRef.addListenerForSingleValueEvent(newNoteListener);
     }
+
+    private void restoreNote(){
+        // Get details of note
+        ValueEventListener newNoteListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                Note note = dataSnapshot.getValue(Note.class);
+                String newRestoredKey = firebaseDatabase.getReference("/notes/").push().getKey();
+                firebaseDatabase.getReference("/notes/" + newRestoredKey)
+                        .setValue(new Note(
+                                note.getTitle(),
+                                note.getContent(),
+                                note.getLabel(),
+                                1476044575974L
+                        ));
+                firebaseRef.removeValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                //Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        firebaseRef.addListenerForSingleValueEvent(newNoteListener);
+    }
+
+    private void permanentlyDeleteNote(){
+        firebaseRef.removeValue();
+    }
+
 }
