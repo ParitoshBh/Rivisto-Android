@@ -3,6 +3,7 @@ package productivity.notes.rivisto;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -13,6 +14,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 public class OpenNoteActivity extends AppCompatActivity {
@@ -95,6 +97,7 @@ public class OpenNoteActivity extends AppCompatActivity {
             case R.id.action_save_note:
                 if (isNewNote) {
                     createNewNote();
+                    //Log.i("Firebase Server Time", ServerValue.TIMESTAMP.get("timestamp"));
                     Toast.makeText(this, "Note created", Toast.LENGTH_SHORT).show();
                 } else {
                     updateNote();
@@ -127,11 +130,12 @@ public class OpenNoteActivity extends AppCompatActivity {
 
     private void createNewNote() {
         String newNoteKey = firebaseRef.push().getKey();
+        String noteLabel = extractTag(noteContent.getText().toString());
         firebaseRef.child(newNoteKey)
                 .setValue(new Note(
                         noteTitle.getText().toString(),
                         noteContent.getText().toString(),
-                        "Android",
+                        noteLabel,
                         1476044575974L
                 ));
 
@@ -205,6 +209,20 @@ public class OpenNoteActivity extends AppCompatActivity {
 
     private void permanentlyDeleteNote(){
         firebaseRef.removeValue();
+    }
+
+    private String extractTag(String noteContent){
+        String contentWords[] = noteContent.split(" ");
+        String label = "";
+
+        for (String word:contentWords) {
+            if (word.startsWith("#") && (word.length() > 1)){
+                label = word.substring(1);
+                break;
+            }
+        }
+
+        return label;
     }
 
 }
