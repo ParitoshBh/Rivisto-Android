@@ -17,6 +17,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
+
 public class OpenNoteActivity extends AppCompatActivity {
     private DatabaseReference firebaseRef;
     private FirebaseDatabase firebaseDatabase;
@@ -97,7 +99,6 @@ public class OpenNoteActivity extends AppCompatActivity {
             case R.id.action_save_note:
                 if (isNewNote) {
                     createNewNote();
-                    //Log.i("Firebase Server Time", ServerValue.TIMESTAMP.get("timestamp"));
                     Toast.makeText(this, "Note created", Toast.LENGTH_SHORT).show();
                 } else {
                     updateNote();
@@ -136,7 +137,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                         noteTitle.getText().toString(),
                         noteContent.getText().toString(),
                         noteLabel,
-                        1476044575974L
+                        getCurrentTime()
                 ));
 
         // Update note key to newly created note key
@@ -150,7 +151,13 @@ public class OpenNoteActivity extends AppCompatActivity {
     }
 
     private void updateNote() {
-        firebaseRef.setValue(new Note(noteTitle.getText().toString(), noteContent.getText().toString(), "Android", 1476044575974L));
+        firebaseRef.setValue(
+                new Note(
+                        noteTitle.getText().toString(),
+                        noteContent.getText().toString(),
+                        extractTag(noteContent.getText().toString()),
+                        getCurrentTime()
+                ));
     }
 
     private void moveNoteToTrash() {
@@ -166,7 +173,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                                 note.getTitle(),
                                 note.getContent(),
                                 note.getLabel(),
-                                1476044575974L
+                                note.getTime()
                         ));
                 firebaseRef.removeValue();
             }
@@ -193,7 +200,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                                 note.getTitle(),
                                 note.getContent(),
                                 note.getLabel(),
-                                1476044575974L
+                                note.getTime()
                         ));
                 firebaseRef.removeValue();
             }
@@ -223,6 +230,11 @@ public class OpenNoteActivity extends AppCompatActivity {
         }
 
         return label;
+    }
+
+    private Long getCurrentTime(){
+        Date date = new Date();
+        return date.getTime();
     }
 
 }
