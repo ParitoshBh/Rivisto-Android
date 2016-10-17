@@ -105,8 +105,9 @@ public class NotesFragment extends Fragment {
             adapter = new FirebaseRecyclerAdapter<Note, NoteHolder>(Note.class, R.layout.note, NoteHolder.class, firebaseRef) {
                 @Override
                 public void populateViewHolder(NoteHolder noteHolder, Note note, final int position) {
-                    noteHolder.setTitle(note.getTitle());
-                    noteHolder.setLabel(note.getLabel());
+                    noteHolder.setNoteTitle(note.getTitle());
+                    noteHolder.setNoteLabel(note.getLabel());
+                    noteHolder.setNoteContent(note.getContent());
 
                     noteHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override

@@ -58,8 +58,8 @@ public class SearchActivity extends AppCompatActivity {
                 @Override
                 public void populateViewHolder(NoteHolder noteHolder, Note note, final int position) {
                     if (note.getTitle().toLowerCase().contains(searchQuery) || note.getContent().toLowerCase().contains(searchQuery)) {
-                        noteHolder.setTitle(note.getTitle());
-                        noteHolder.setLabel(note.getLabel());
+                        noteHolder.setNoteTitle(note.getTitle());
+                        noteHolder.setNoteLabel(note.getLabel());
                     }
 
 //                    noteHolder.view.setOnClickListener(new View.OnClickListener() {

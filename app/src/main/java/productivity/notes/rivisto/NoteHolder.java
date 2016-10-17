@@ -6,22 +6,28 @@ import android.widget.TextView;
 
 class NoteHolder extends RecyclerView.ViewHolder {
     View view;
-    TextView noteTitle;
-    TextView noteLabel;
+    private TextView noteTitle;
+    private TextView noteLabel;
+    private TextView noteContent;
 
     public NoteHolder(View itemView) {
         super(itemView);
         view = itemView;
         noteTitle = (TextView) itemView.findViewById(R.id.noteTitle);
         noteLabel = (TextView) itemView.findViewById(R.id.noteLabel);
+        noteContent =(TextView) itemView.findViewById(R.id.noteContent);
     }
 
-    public void setTitle(String title) {
+    public void setNoteTitle(String title) {
         noteTitle.setText(title);
     }
 
-    public void setLabel(String label) {
+    public void setNoteLabel(String label) {
         noteLabel.setText(label);
+    }
+
+    public void setNoteContent(String content){
+        noteContent.setText(content);
     }
 
     public View getView() {

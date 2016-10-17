@@ -50,8 +50,8 @@ public class TrashActivity extends AppCompatActivity {
 
                 @Override
                 public void populateViewHolder(NoteHolder noteHolder, Note note, final int position) {
-                    noteHolder.setTitle(note.getTitle());
-                    noteHolder.setLabel(note.getLabel());
+                    noteHolder.setNoteTitle(note.getTitle());
+                    noteHolder.setNoteLabel(note.getLabel());
 
                     noteHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
