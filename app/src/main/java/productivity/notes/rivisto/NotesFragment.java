@@ -50,6 +50,7 @@ public class NotesFragment extends Fragment {
             public void onClick(View view) {
                 Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
                 openNoteIntent.putExtra("key", "null");
+                openNoteIntent.putExtra("lookup", "notes");
                 startActivity(openNoteIntent);
             }
         });
