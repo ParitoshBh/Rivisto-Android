@@ -27,7 +27,7 @@
         android:layout_marginTop="?attr/actionBarSize">
 
         <EditText
-            android:background="@android:color/transparent"
+            android:hint="@string/note_title_hint"
             android:id="@+id/openNoteTitle"
             android:layout_marginLeft="5dp"
             android:textStyle="bold"
@@ -39,6 +39,7 @@
             android:maxLines="2" />
 
         <EditText
+            android:hint="@string/note_content_long_hint"
             android:background="@android:color/transparent"
             android:id="@+id/openNoteContent"
             android:layout_width="match_parent"
