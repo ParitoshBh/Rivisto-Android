@@ -60,6 +60,13 @@ public class SearchActivity extends AppCompatActivity {
                     if (note.getTitle().toLowerCase().contains(searchQuery) || note.getContent().toLowerCase().contains(searchQuery)) {
                         noteHolder.setNoteTitle(note.getTitle());
                         noteHolder.setNoteLabel(note.getLabel());
+                        noteHolder.setNoteContent(note.getContent());
+                    } else {
+                        /**
+                         * This is the most shittiest work around. Firebase UI doesn't support filtering as of now.
+                         * We are wasting a lot of bandwidth and time with this but for now it works. Needs to be changed though.
+                         */
+                        noteHolder.hideView();
                     }
 
 //                    noteHolder.view.setOnClickListener(new View.OnClickListener() {

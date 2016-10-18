@@ -30,6 +30,10 @@ class NoteHolder extends RecyclerView.ViewHolder {
         noteContent.setText(content);
     }
 
+    public void hideView(){
+        view.setVisibility(View.GONE);
+    }
+
     public View getView() {
         return view;
     }
