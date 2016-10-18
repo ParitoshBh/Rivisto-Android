@@ -13,7 +13,7 @@
         android:layout_marginTop="80dp"
         android:ems="10"
         android:hint="apiKey"
-        android:inputType="text" />
+        android:inputType="text|textNoSuggestions" />
 
     <EditText
         android:id="@+id/configureMessagingSenderID"
@@ -24,7 +24,7 @@
         android:layout_marginTop="40dp"
         android:ems="10"
         android:hint="messagingSenderId"
-        android:inputType="text" />
+        android:inputType="text|textNoSuggestions" />
 
     <EditText
         android:id="@+id/configureDatabaseURL"
@@ -35,7 +35,7 @@
         android:layout_marginTop="40dp"
         android:ems="10"
         android:hint="databaseURL"
-        android:inputType="text" />
+        android:inputType="text|textNoSuggestions" />
 
     <Button
         android:id="@+id/configureRivisto"

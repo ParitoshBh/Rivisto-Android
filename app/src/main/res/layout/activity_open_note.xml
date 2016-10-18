@@ -24,8 +24,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:focusableInTouchMode="true"
-        android:layout_marginTop="?attr/actionBarSize">
+        android:layout_marginTop="?attr/actionBarSize"
+        android:focusableInTouchMode="true">
 
         <EditText
             android:id="@+id/openNoteTitle"
@@ -35,7 +35,7 @@
             android:layout_marginRight="5dp"
             android:layout_marginTop="10dp"
             android:hint="@string/note_title_hint"
-            android:inputType="text"
+            android:inputType="text|textNoSuggestions"
             android:maxLines="2"
             android:textColorHint="@android:color/darker_gray"
             android:textSize="16sp"
@@ -43,16 +43,17 @@
 
         <EditText
             android:id="@+id/openNoteContent"
-            android:textSize="15sp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/openNoteTitle"
             android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
             android:layout_marginTop="5dp"
+            android:inputType="textMultiLine|textNoSuggestions"
             android:background="@android:color/transparent"
             android:gravity="start"
-            android:hint="@string/note_content_long_hint" />
+            android:hint="@string/note_content_long_hint"
+            android:textSize="15sp" />
 
     </RelativeLayout>
 
