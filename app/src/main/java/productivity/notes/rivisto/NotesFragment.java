@@ -1,5 +1,6 @@
 package productivity.notes.rivisto;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.ComponentName;
@@ -78,6 +79,10 @@ public class NotesFragment extends Fragment {
         int id = item.getItemId();
 
         switch (id){
+            case R.id.action_view_labels:
+                DialogFragment newFragment = new TagsDialog();
+                newFragment.show(getFragmentManager(), "TagsDialog");
+                break;
             case R.id.action_settings:
                 Intent openSettingsIntent = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(openSettingsIntent);
@@ -129,4 +134,5 @@ public class NotesFragment extends Fragment {
             recyclerView.setAdapter(adapter);
         }
     }
+
 }
