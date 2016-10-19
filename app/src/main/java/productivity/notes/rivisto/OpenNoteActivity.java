@@ -23,7 +23,7 @@ public class OpenNoteActivity extends AppCompatActivity {
     private DatabaseReference firebaseRef;
     private FirebaseDatabase firebaseDatabase;
     private EditText noteTitle, noteContent;
-    private String noteKey, noteLookup;
+    private String noteKey, noteLookup, selectedNoteLabel;
     private boolean isNewNote;
 
     @Override
@@ -50,12 +50,12 @@ public class OpenNoteActivity extends AppCompatActivity {
         } else {
             isNewNote = false;
 
-            if (noteLookup.equalsIgnoreCase("trash")){
+            if (noteLookup.equalsIgnoreCase("trash")) {
                 noteTitle.setEnabled(false);
                 noteContent.setEnabled(false);
 
                 firebaseRef = firebaseDatabase.getReference("/trash/" + noteKey);
-            } else if (noteLookup.equalsIgnoreCase("notes")){
+            } else if (noteLookup.equalsIgnoreCase("notes")) {
                 firebaseRef = firebaseDatabase.getReference("/notes/" + noteKey);
             }
 
@@ -66,6 +66,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                     Note note = dataSnapshot.getValue(Note.class);
                     noteTitle.setText(note.getTitle());
                     noteContent.setText(note.getContent());
+                    selectedNoteLabel = note.getLabel();
                 }
 
                 @Override
@@ -82,7 +83,7 @@ public class OpenNoteActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        if (getIntent().getStringExtra("lookup").equalsIgnoreCase("trash")){
+        if (getIntent().getStringExtra("lookup").equalsIgnoreCase("trash")) {
             getMenuInflater().inflate(R.menu.menu_open_trash_note, menu);
         } else {
             getMenuInflater().inflate(R.menu.menu_open_note, menu);
@@ -95,7 +96,7 @@ public class OpenNoteActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.action_save_note:
                 if (isNewNote) {
                     createNewNote();
@@ -143,21 +144,90 @@ public class OpenNoteActivity extends AppCompatActivity {
         // Update note key to newly created note key
         noteKey = newNoteKey;
 
+        selectedNoteLabel = noteLabel;
+
         // Update isNewNote boolean. Note isn't a new one anymore.
         isNewNote = false;
 
         // Update firebase reference
         firebaseRef = firebaseDatabase.getReference("/notes/" + noteKey);
+
+        incrementTagNoteCount(noteLabel);
+    }
+
+    private void incrementTagNoteCount(final String tag) {
+        firebaseDatabase.getReference("/tags/" + tag).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Long noteCount = 1L;
+
+                if (dataSnapshot.hasChildren()) {
+                    // Increment the note count
+                    Tag tagObj = dataSnapshot.getValue(Tag.class);
+                    noteCount += tagObj.getNoteCount();
+                }
+
+                firebaseDatabase.getReference("/tags/" + tag).setValue(
+                        new Tag(
+                                noteCount
+                        )
+                );
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void decrementTagNoteCount(final String tag) {
+        firebaseDatabase.getReference("/tags/" + tag).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                // Increment the note count
+                Tag tagObj = dataSnapshot.getValue(Tag.class);
+                Long noteCount = tagObj.getNoteCount();
+
+                noteCount -= 1L;
+
+                if (noteCount < 1){
+                    firebaseDatabase.getReference("/tags/" + tag).removeValue();
+                } else {
+                    firebaseDatabase.getReference("/tags/" + tag).setValue(new Tag(noteCount));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void adjustTagNoteCount(String oldLabel, String newLabel){
+        decrementTagNoteCount(oldLabel);
+        incrementTagNoteCount(newLabel);
     }
 
     private void updateNote() {
+        String updatedNoteLabel = extractTag(noteContent.getText().toString());
+
         firebaseRef.setValue(
                 new Note(
                         noteTitle.getText().toString(),
                         noteContent.getText().toString(),
-                        extractTag(noteContent.getText().toString()),
+                        updatedNoteLabel,
                         getCurrentTime()
                 ));
+
+        if (!updatedNoteLabel.equals(selectedNoteLabel)){
+            adjustTagNoteCount(selectedNoteLabel, updatedNoteLabel);
+            selectedNoteLabel = updatedNoteLabel;
+        }
     }
 
     private void moveNoteToTrash() {
@@ -176,6 +246,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                                 note.getTime()
                         ));
                 firebaseRef.removeValue();
+                decrementTagNoteCount(note.getLabel());
             }
 
             @Override
@@ -187,7 +258,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         firebaseRef.addListenerForSingleValueEvent(newNoteListener);
     }
 
-    private void restoreNote(){
+    private void restoreNote() {
         // Get details of note
         ValueEventListener newNoteListener = new ValueEventListener() {
             @Override
@@ -214,16 +285,16 @@ public class OpenNoteActivity extends AppCompatActivity {
         firebaseRef.addListenerForSingleValueEvent(newNoteListener);
     }
 
-    private void permanentlyDeleteNote(){
+    private void permanentlyDeleteNote() {
         firebaseRef.removeValue();
     }
 
-    private String extractTag(String noteContent){
+    private String extractTag(String noteContent) {
         String contentWords[] = noteContent.split(" ");
         String label = "";
 
-        for (String word:contentWords) {
-            if (word.startsWith("#") && (word.length() > 1)){
+        for (String word : contentWords) {
+            if (word.startsWith("#") && (word.length() > 1)) {
                 label = word.substring(1);
                 break;
             }
@@ -232,7 +303,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         return label;
     }
 
-    private Long getCurrentTime(){
+    private Long getCurrentTime() {
         Date date = new Date();
         return date.getTime();
     }
