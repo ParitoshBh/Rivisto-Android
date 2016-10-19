@@ -9,6 +9,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -39,6 +41,26 @@ public class TrashActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
 
         new trashedNotes().execute();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_trash, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id){
+            case R.id.action_empty_trash:
+                firebaseDatabase.getReference("/trash").removeValue();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class trashedNotes extends AsyncTask<Void, Void, Boolean> {
