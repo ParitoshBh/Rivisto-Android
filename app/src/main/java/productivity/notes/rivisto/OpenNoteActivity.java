@@ -274,6 +274,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                                 note.getTime()
                         ));
                 firebaseRef.removeValue();
+                incrementTagNoteCount(note.getLabel());
             }
 
             @Override
