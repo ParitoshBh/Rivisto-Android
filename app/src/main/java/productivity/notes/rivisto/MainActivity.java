@@ -22,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setTitle(getString(R.string.all_notes));
+
         sharedPref = this.getSharedPreferences("FirebaseCredentials", Context.MODE_PRIVATE);
 
         if(sharedPref.getBoolean(getString(R.string.isConfigured), false)){
