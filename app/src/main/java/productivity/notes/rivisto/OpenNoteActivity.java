@@ -152,7 +152,10 @@ public class OpenNoteActivity extends AppCompatActivity {
         // Update firebase reference
         firebaseRef = firebaseDatabase.getReference("/notes/" + noteKey);
 
-        incrementTagNoteCount(noteLabel);
+        // Add tag to database is it is not null i.e. there is a tag present
+        if (noteLabel != null){
+            incrementTagNoteCount(noteLabel);
+        }
     }
 
     private void incrementTagNoteCount(final String tag) {
@@ -209,8 +212,13 @@ public class OpenNoteActivity extends AppCompatActivity {
     }
 
     private void adjustTagNoteCount(String oldLabel, String newLabel){
-        decrementTagNoteCount(oldLabel);
-        incrementTagNoteCount(newLabel);
+        if (oldLabel != null){
+            decrementTagNoteCount(oldLabel);
+        }
+
+        if (newLabel != null){
+            incrementTagNoteCount(newLabel);
+        }
     }
 
     private void updateNote() {
@@ -224,10 +232,11 @@ public class OpenNoteActivity extends AppCompatActivity {
                         getCurrentTime()
                 ));
 
-        if (!updatedNoteLabel.equals(selectedNoteLabel)){
+        if (updatedNoteLabel != selectedNoteLabel){
             adjustTagNoteCount(selectedNoteLabel, updatedNoteLabel);
-            selectedNoteLabel = updatedNoteLabel;
         }
+
+        selectedNoteLabel = updatedNoteLabel;
     }
 
     private void moveNoteToTrash() {
@@ -292,7 +301,7 @@ public class OpenNoteActivity extends AppCompatActivity {
 
     private String extractTag(String noteContent) {
         String contentWords[] = noteContent.split(" ");
-        String label = "";
+        String label = null;
 
         for (String word : contentWords) {
             if (word.startsWith("#") && (word.length() > 1)) {
