@@ -3,6 +3,7 @@ package productivity.notes.rivisto;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,14 +13,21 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 
 public class TagsDialog extends DialogFragment {
+
+    public interface TagClickListener {
+        public void onTagClick(DialogFragment dialogFragment, String tagName);
+    }
+
     private RecyclerView recyclerView;
     private FirebaseRecyclerAdapter<Tag, TagHolder> adapter;
     private DatabaseReference firebaseRef;
+    private TagClickListener tagClickListener;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -60,15 +68,12 @@ public class TagsDialog extends DialogFragment {
                 public void populateViewHolder(TagHolder tagHolder, Tag tag, final int position) {
                     tagHolder.setTagName(adapter.getRef(position).getKey());
 
-//                    noteHolder.view.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-//                            Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
-//                            openNoteIntent.putExtra("key", adapter.getRef(position).getKey());
-//                            openNoteIntent.putExtra("lookup", "notes");
-//                            startActivity(openNoteIntent);
-//                        }
-//                    });
+                    tagHolder.view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            tagClickListener.onTagClick(TagsDialog.this, adapter.getRef(position).getKey());
+                        }
+                    });
                 }
             };
 
@@ -78,6 +83,21 @@ public class TagsDialog extends DialogFragment {
         @Override
         protected void onPostExecute(Boolean result) {
             recyclerView.setAdapter(adapter);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        // Verify that the host activity implements the callback interface
+        try {
+            // Instantiate the NoticeDialogListener so we can send events to the host
+            tagClickListener = (TagClickListener) getActivity();
+        } catch (ClassCastException e) {
+            // The activity doesn't implement the interface, throw exception
+            throw new ClassCastException(getActivity().toString()
+                    + " must implement TagClickListener");
         }
     }
 }

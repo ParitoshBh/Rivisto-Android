@@ -1,16 +1,18 @@
 package productivity.notes.rivisto;
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TagsDialog.TagClickListener {
     private FirebaseDatabase firebaseDatabase;
     private FirebaseApp firebaseApp;
     private SharedPreferences sharedPref;
@@ -64,4 +66,11 @@ public class MainActivity extends AppCompatActivity {
         return firebaseDatabase;
     }
 
+    @Override
+    public void onTagClick(DialogFragment dialogFragment, String tagName) {
+        // Dismiss dialog
+        dialogFragment.dismiss();
+
+        Toast.makeText(this, tagName, Toast.LENGTH_SHORT).show();
+    }
 }
