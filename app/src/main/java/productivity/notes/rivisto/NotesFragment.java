@@ -80,8 +80,8 @@ public class NotesFragment extends Fragment {
 
         switch (id){
             case R.id.action_view_labels:
-                DialogFragment newFragment = new TagsDialog();
-                newFragment.show(getFragmentManager(), "TagsDialog");
+                Intent openTagsIntent = new Intent(getActivity(), TagsActivity.class);
+                startActivity(openTagsIntent);
                 break;
             case R.id.action_settings:
                 Intent openSettingsIntent = new Intent(getActivity(), SettingsActivity.class);

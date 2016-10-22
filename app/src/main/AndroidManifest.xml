@@ -55,6 +55,12 @@
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".TagsActivity"
+            android:parentActivityName=".MainActivity"
+            android:label="Tags"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>
