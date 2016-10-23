@@ -30,6 +30,8 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
 
         View view = inflater.inflate(R.layout.fragment_configure, container, false);
 
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.app_name));
+
         apiKey = (EditText) view.findViewById(R.id.configureAPIKey);
         messagingSenderID = (EditText) view.findViewById(R.id.configureMessagingSenderID);
         databaseURL = (EditText) view.findViewById(R.id.configureDatabaseURL);
