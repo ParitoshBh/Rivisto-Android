@@ -10,15 +10,23 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FirebaseDatabase firebaseDatabase;
-    private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
+    private ArrayList<Note> notes;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,13 +37,6 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            new searchNotes().execute(query.trim().toLowerCase());
-        }
-
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -44,6 +45,15 @@ public class SearchActivity extends AppCompatActivity {
 
         FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
         firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
+
+        notes = new ArrayList<>();
+
+        Intent intent = getIntent();
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            new searchNotes().execute(query.trim().toLowerCase());
+        }
     }
 
     private class searchNotes extends AsyncTask<String, Void, Boolean> {
@@ -52,40 +62,42 @@ public class SearchActivity extends AppCompatActivity {
 
             final String searchQuery = query[0];
 
-            adapter = new FirebaseRecyclerAdapter<Note, NoteHolder>(Note.class, R.layout.note, NoteHolder.class,
-                    firebaseDatabase.getReference("/notes/")) {
+            firebaseDatabase.getReference("/notes/").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Note note = dataSnapshot.getValue(Note.class);
+                    if (note.getTitle().toLowerCase().contains(searchQuery) || note.getContent().toLowerCase().contains(searchQuery)) {
+                        notes.add(note);
+                    }
+                }
 
                 @Override
-                public void populateViewHolder(NoteHolder noteHolder, Note note, final int position) {
-                    if (note.getTitle().toLowerCase().contains(searchQuery) || note.getContent().toLowerCase().contains(searchQuery)) {
-                        noteHolder.setNoteTitle(note.getTitle());
-                        noteHolder.setNoteLabel(note.getLabel());
-                        noteHolder.setNoteContent(note.getContent());
-                    } else {
-                        /**
-                         * This is the most shittiest work around. Firebase UI doesn't support filtering as of now.
-                         * We are wasting a lot of bandwidth and time with this but for now it works. Needs to be changed though.
-                         */
-                        noteHolder.hideView();
-                    }
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-//                    noteHolder.view.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View view) {
-////                            Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
-////                            openNoteIntent.putExtra("key", adapter.getRef(position).getKey());
-////                            startActivity(openNoteIntent);
-//                        }
-//                    });
                 }
-            };
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
 
             return true;
         }
 
         @Override
         protected void onPostExecute(Boolean result) {
-            recyclerView.setAdapter(adapter);
+            recyclerView.setAdapter(new RecyclerViewAdapter(notes));
         }
     }
 }
