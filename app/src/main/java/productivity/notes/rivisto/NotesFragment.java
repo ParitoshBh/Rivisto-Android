@@ -95,6 +95,7 @@ public class NotesFragment extends Fragment {
                 break;
             case R.id.action_view_trash:
                 Intent openTrashIntent = new Intent(getActivity(), TrashActivity.class);
+                openTrashIntent.putExtra(getString(R.string.userKey), userKey);
                 startActivity(openTrashIntent);
                 break;
         }

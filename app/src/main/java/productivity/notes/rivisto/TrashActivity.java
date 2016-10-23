@@ -15,12 +15,15 @@ import android.view.View;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class TrashActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FirebaseDatabase firebaseDatabase;
     private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
+    private DatabaseReference firebaseRef;
+    private String userKey;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,12 +36,20 @@ public class TrashActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
+        userKey = this.getIntent().getStringExtra(getString(R.string.userKey));
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
-        firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
+        if (userKey == null) {
+            FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
+            firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
+
+            firebaseRef = firebaseDatabase.getReference("/trash");
+        } else {
+            firebaseRef = FirebaseDatabase.getInstance().getReference(userKey + "/trash");
+        }
 
         new trashedNotes().execute();
     }
@@ -56,7 +67,7 @@ public class TrashActivity extends AppCompatActivity {
 
         switch (id){
             case R.id.action_empty_trash:
-                firebaseDatabase.getReference("/trash").removeValue();
+                firebaseRef.removeValue();
                 break;
         }
 
@@ -68,7 +79,7 @@ public class TrashActivity extends AppCompatActivity {
         protected Boolean doInBackground(Void... params) {
 
             adapter = new FirebaseRecyclerAdapter<Note, NoteHolder>(Note.class, R.layout.note, NoteHolder.class,
-                    firebaseDatabase.getReference("/trash/")) {
+                    firebaseRef) {
 
                 @Override
                 public void populateViewHolder(NoteHolder noteHolder, Note note, final int position) {
@@ -78,10 +89,7 @@ public class TrashActivity extends AppCompatActivity {
                     noteHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent openNoteIntent = new Intent(getApplication(), OpenNoteActivity.class);
-                            openNoteIntent.putExtra("key", adapter.getRef(position).getKey());
-                            openNoteIntent.putExtra("lookup", "trash");
-                            startActivity(openNoteIntent);
+                            openNoteActivity(adapter.getRef(position).getKey(), "trash", userKey);
                         }
                     });
                 }
@@ -94,5 +102,13 @@ public class TrashActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean result) {
             recyclerView.setAdapter(adapter);
         }
+    }
+
+    private void openNoteActivity(String key, String lookupType, String userKey){
+        Intent openNoteIntent = new Intent(this, OpenNoteActivity.class);
+        openNoteIntent.putExtra("key", key);
+        openNoteIntent.putExtra("lookup", lookupType);
+        openNoteIntent.putExtra(getString(R.string.userKey), userKey);
+        startActivity(openNoteIntent);
     }
 }
