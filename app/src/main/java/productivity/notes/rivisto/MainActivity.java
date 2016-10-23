@@ -27,35 +27,47 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = this.getSharedPreferences("FirebaseCredentials", Context.MODE_PRIVATE);
 
         if(sharedPref.getBoolean(getString(R.string.isConfigured), false)){
-            initFirebase(
-                    sharedPref.getString(getString(R.string.apiKey), null),
-                    sharedPref.getString(getString(R.string.messagingSenderID), null),
-                    sharedPref.getString(getString(R.string.databaseURL), null)
-            );
+            if (sharedPref.getBoolean(getString(R.string.isAccountHolder), false)){
+                initFirebase(null, null, null, true);
 
-            getFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.fragment_container, new NotesFragment())
-                    .commit();
+                openNotesFragment(sharedPref.getString(getString(R.string.userKey), null), true);
+            } else {
+                initFirebase(
+                        sharedPref.getString(getString(R.string.apiKey), null),
+                        sharedPref.getString(getString(R.string.messagingSenderID), null),
+                        sharedPref.getString(getString(R.string.databaseURL), null),
+                        false
+                );
+
+                openNotesFragment(null, false);
+            }
         } else {
             getFragmentManager()
                     .beginTransaction()
-                    .add(R.id.fragment_container, new ConfigureFragment())
+                    .replace(R.id.fragment_container, new ConfigureFragment())
                     .commit();
         }
 
     }
 
-    public void initFirebase(String apiKey, String messagingID, String databaseURL) {
+    public void initFirebase(String apiKey, String messagingID, String databaseURL, Boolean isAccountHolder) {
         if (FirebaseApp.getApps(this).isEmpty()){
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setApiKey(apiKey)
-                    .setApplicationId(messagingID)
-                    .setDatabaseUrl(databaseURL)
-                    .build();
-            firebaseApp = FirebaseApp.initializeApp(this, options, "Firebase");
+            if (isAccountHolder){
+                firebaseApp = FirebaseApp.initializeApp(this);
+            } else {
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setApiKey(apiKey)
+                        .setApplicationId(messagingID)
+                        .setDatabaseUrl(databaseURL)
+                        .build();
+                firebaseApp = FirebaseApp.initializeApp(this, options, "Firebase");
+            }
         } else {
-            firebaseApp = FirebaseApp.getInstance("Firebase");
+            if (isAccountHolder){
+                firebaseApp = FirebaseApp.getInstance();
+            } else {
+                firebaseApp = FirebaseApp.getInstance("Firebase");
+            }
         }
         firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
     }
@@ -63,4 +75,19 @@ public class MainActivity extends AppCompatActivity {
     public FirebaseDatabase getFirebaseDatabase(){
         return firebaseDatabase;
     }
+
+    public void openNotesFragment(String userKey, Boolean isAccountHolder){
+        NotesFragment notesFragment = new NotesFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.userKey), userKey);
+        bundle.putBoolean(getString(R.string.isAccountHolder), isAccountHolder);
+        notesFragment.setArguments(bundle);
+
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, notesFragment)
+                .commit();
+    }
+
 }

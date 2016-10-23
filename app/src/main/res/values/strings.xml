@@ -12,6 +12,8 @@
     <string name="messagingSenderID">messagingSenderID</string>
     <string name="databaseURL">databaseURL</string>
     <string name="isConfigured">isConfigured</string>
+    <string name="isAccountHolder">isAccountHolder</string>
+    <string name="userKey">userKey</string>
     <string name="settings_reset">reset</string>
     <string name="search_hint">Search notes</string>
     <string name="action_restore_note">Restore Note</string>
