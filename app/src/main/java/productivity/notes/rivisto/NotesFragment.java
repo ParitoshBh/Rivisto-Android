@@ -1,6 +1,5 @@
 package productivity.notes.rivisto;
 
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.SearchManager;
 import android.content.ComponentName;
@@ -29,6 +28,7 @@ public class NotesFragment extends Fragment {
     private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
     private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
+    private String userKey;
 
     public NotesFragment() {
     }
@@ -44,15 +44,20 @@ public class NotesFragment extends Fragment {
         floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        firebaseRef = ((MainActivity)getActivity()).getFirebaseDatabase().getReference("/notes");
+        final Bundle bundle = this.getArguments();
+        userKey = bundle.getString(getString(R.string.userKey));
+
+        if (bundle.getBoolean(getString(R.string.isAccountHolder), false)){
+            firebaseRef = ((MainActivity)getActivity()).getFirebaseDatabase()
+                    .getReference(userKey + "/notes/");
+        } else {
+            firebaseRef = ((MainActivity)getActivity()).getFirebaseDatabase().getReference("/notes");
+        }
 
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
-                openNoteIntent.putExtra("key", "null");
-                openNoteIntent.putExtra("lookup", "notes");
-                startActivity(openNoteIntent);
+                openNoteActivity("null", "notes", userKey);
             }
         });
 
@@ -117,10 +122,7 @@ public class NotesFragment extends Fragment {
                     noteHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
-                            openNoteIntent.putExtra("key", adapter.getRef(position).getKey());
-                            openNoteIntent.putExtra("lookup", "notes");
-                            startActivity(openNoteIntent);
+                            openNoteActivity(adapter.getRef(position).getKey(), "notes", userKey);
                         }
                     });
                 }
@@ -133,6 +135,14 @@ public class NotesFragment extends Fragment {
         protected void onPostExecute(Boolean result) {
             recyclerView.setAdapter(adapter);
         }
+    }
+
+    private void openNoteActivity(String key, String lookupType, String userKey){
+        Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
+        openNoteIntent.putExtra("key", key);
+        openNoteIntent.putExtra("lookup", lookupType);
+        openNoteIntent.putExtra(getString(R.string.userKey), userKey);
+        startActivity(openNoteIntent);
     }
 
 }

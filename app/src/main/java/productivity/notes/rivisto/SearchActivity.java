@@ -1,7 +1,9 @@
 package productivity.notes.rivisto;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,23 +12,22 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference firebaseRef;
     private ArrayList<Note> notes;
+    private SharedPreferences sharedPref;
+    private String userKey;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,12 +40,19 @@ public class SearchActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
+        sharedPref = this.getSharedPreferences("FirebaseCredentials", Context.MODE_PRIVATE);
+        userKey = sharedPref.getString(getString(R.string.userKey), null);
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
-        firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
+        if (userKey == null) {
+            FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
+            firebaseRef = FirebaseDatabase.getInstance(firebaseApp).getReference("/notes/");
+        } else {
+            firebaseRef = FirebaseDatabase.getInstance().getReference(userKey + "/notes/");
+        }
 
         notes = new ArrayList<>();
 
@@ -62,7 +70,7 @@ public class SearchActivity extends AppCompatActivity {
 
             final String searchQuery = query[0];
 
-            firebaseDatabase.getReference("/notes/").addChildEventListener(new ChildEventListener() {
+            firebaseRef.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Note note = dataSnapshot.getValue(Note.class);
