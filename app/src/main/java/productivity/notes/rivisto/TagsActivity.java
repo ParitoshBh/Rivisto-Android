@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-public class TagsActivity extends AppCompatActivity implements TagsFragment.OnTagSelectedListener {
+public class TagsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -16,23 +16,22 @@ public class TagsActivity extends AppCompatActivity implements TagsFragment.OnTa
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        getFragmentManager()
-                .beginTransaction()
-                .add(R.id.fragment_container, new TagsFragment())
-                .commit();
+        String userKey = this.getIntent().getStringExtra(getString(R.string.userKey));
+
+        openTagsFragment(userKey);
     }
 
-    @Override
-    public void onTagSelected(String name) {
-        TagNotesFragment newFragment = new TagNotesFragment();
-        Bundle args = new Bundle();
-        args.putString("tagName", name);
-        newFragment.setArguments(args);
+    private void openTagsFragment(String userKey){
+        TagsFragment tagsFragment = new TagsFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.userKey), userKey);
+
+        tagsFragment.setArguments(bundle);
 
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, newFragment)
-                .addToBackStack("TagNoteFragment")
+                .add(R.id.fragment_container, tagsFragment)
                 .commit();
     }
 }

@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.FirebaseApp;
@@ -22,7 +21,7 @@ public class TagNotesFragment extends Fragment {
     private RecyclerView recyclerView;
     private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
     private DatabaseReference firebaseRef;
-    private String tagName;
+    private String tagName, userKey;
 
     public TagNotesFragment() {
     }
@@ -36,13 +35,18 @@ public class TagNotesFragment extends Fragment {
 
         Bundle args = this.getArguments();
         tagName = args.getString("tagName", "Nothing");
+        userKey = args.getString(getString(R.string.userKey), null);
 
         ((TagsActivity) getActivity()).getSupportActionBar().setTitle("Filed in " + tagName);
 
-        FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
+        if (userKey == null) {
+            FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
 
-        firebaseRef = firebaseDatabase.getReference("/notes");
+            firebaseRef = firebaseDatabase.getReference("/notes");
+        } else {
+            firebaseRef = FirebaseDatabase.getInstance().getReference(userKey + "/notes");
+        }
 
         new getTagNotes().execute();
 
@@ -71,10 +75,7 @@ public class TagNotesFragment extends Fragment {
                     noteHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
-                            openNoteIntent.putExtra("key", adapter.getRef(position).getKey());
-                            openNoteIntent.putExtra("lookup", "notes");
-                            startActivity(openNoteIntent);
+                            openNoteActivity(adapter.getRef(position).getKey(), "notes", userKey);
                         }
                     });
                 }
@@ -87,5 +88,13 @@ public class TagNotesFragment extends Fragment {
         protected void onPostExecute(Boolean result) {
             recyclerView.setAdapter(adapter);
         }
+    }
+
+    private void openNoteActivity(String key, String lookupType, String userKey){
+        Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
+        openNoteIntent.putExtra("key", key);
+        openNoteIntent.putExtra("lookup", lookupType);
+        openNoteIntent.putExtra(getString(R.string.userKey), userKey);
+        startActivity(openNoteIntent);
     }
 }

@@ -86,6 +86,7 @@ public class NotesFragment extends Fragment {
         switch (id){
             case R.id.action_view_labels:
                 Intent openTagsIntent = new Intent(getActivity(), TagsActivity.class);
+                openTagsIntent.putExtra(getString(R.string.userKey), userKey);
                 startActivity(openTagsIntent);
                 break;
             case R.id.action_settings:

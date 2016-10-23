@@ -1,7 +1,6 @@
 package productivity.notes.rivisto;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.FirebaseApp;
@@ -22,15 +20,9 @@ public class TagsFragment extends Fragment {
     private RecyclerView recyclerView;
     private FirebaseRecyclerAdapter<Tag, TagHolder> adapter;
     private DatabaseReference firebaseRef;
-    private String accessedTagName;
-    OnTagSelectedListener mCallback;
+    private String userKey;
 
     public TagsFragment() {
-    }
-
-    // Container Activity must implement this interface
-    public interface OnTagSelectedListener {
-        public void onTagSelected(String name);
     }
 
     @Nullable
@@ -42,12 +34,17 @@ public class TagsFragment extends Fragment {
 
         ((TagsActivity) getActivity()).getSupportActionBar().setTitle("Tags");
 
-        FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
+        Bundle bundle = this.getArguments();
+        userKey = bundle.getString(getString(R.string.userKey) ,null);
 
-        firebaseRef = firebaseDatabase.getReference("/tags");
+        if (userKey == null) {
+            FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
 
-        accessedTagName = null;
+            firebaseRef = firebaseDatabase.getReference("/tags");
+        } else {
+            firebaseRef = FirebaseDatabase.getInstance().getReference(userKey + "/tags");
+        }
 
         new getTags().execute();
 
@@ -73,7 +70,7 @@ public class TagsFragment extends Fragment {
                     tagHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            mCallback.onTagSelected(adapter.getRef(position).getKey());
+                            openTagNotesFragment(adapter.getRef(position).getKey());
                         }
                     });
                 }
@@ -88,17 +85,17 @@ public class TagsFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    private void openTagNotesFragment(String name){
+        TagNotesFragment newFragment = new TagNotesFragment();
+        Bundle args = new Bundle();
+        args.putString(getString(R.string.userKey), userKey);
+        args.putString("tagName", name);
+        newFragment.setArguments(args);
 
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (OnTagSelectedListener) getActivity();
-        } catch (ClassCastException e) {
-            throw new ClassCastException(getActivity().toString()
-                    + " must implement OnTagSelectedListener");
-        }
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, newFragment)
+                .addToBackStack("TagNoteFragment")
+                .commit();
     }
 }
