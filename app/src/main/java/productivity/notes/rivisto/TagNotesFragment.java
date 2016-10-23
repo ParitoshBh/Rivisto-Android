@@ -1,7 +1,7 @@
 package productivity.notes.rivisto;
 
 import android.app.Fragment;
-import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,43 +18,38 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class TagsFragment extends Fragment {
+public class TagNotesFragment extends Fragment {
     private RecyclerView recyclerView;
-    private FirebaseRecyclerAdapter<Tag, TagHolder> adapter;
+    private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
     private DatabaseReference firebaseRef;
-    private String accessedTagName;
-    OnTagSelectedListener mCallback;
+    private String tagName;
 
-    public TagsFragment() {
-    }
-
-    // Container Activity must implement this interface
-    public interface OnTagSelectedListener {
-        public void onTagSelected(String name);
+    public TagNotesFragment() {
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tags, container, false);
+        View view = inflater.inflate(R.layout.fragment_tag_notes, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        ((TagsActivity) getActivity()).getSupportActionBar().setTitle("Tags");
+        Bundle args = this.getArguments();
+        tagName = args.getString("tagName", "Nothing");
+
+        ((TagsActivity) getActivity()).getSupportActionBar().setTitle("Filed in " + tagName);
 
         FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
 
-        firebaseRef = firebaseDatabase.getReference("/tags");
+        firebaseRef = firebaseDatabase.getReference("/notes");
 
-        accessedTagName = null;
-
-        new getTags().execute();
+        new getTagNotes().execute();
 
         return view;
     }
 
-    private class getTags extends AsyncTask<Void, Void, Boolean> {
+    private class getTagNotes extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected void onPreExecute() {
             recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -65,15 +60,21 @@ public class TagsFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            adapter = new FirebaseRecyclerAdapter<Tag, TagHolder>(Tag.class, R.layout.tag, TagHolder.class, firebaseRef) {
+            adapter = new FirebaseRecyclerAdapter<Note, NoteHolder>(Note.class, R.layout.note, NoteHolder.class,
+                    firebaseRef.orderByChild("label").startAt(tagName).endAt(tagName)) {
                 @Override
-                public void populateViewHolder(TagHolder tagHolder, Tag tag, final int position) {
-                    tagHolder.setTagName(adapter.getRef(position).getKey());
+                public void populateViewHolder(NoteHolder noteHolder, Note note, final int position) {
+                    noteHolder.setNoteTitle(note.getTitle());
+                    noteHolder.setNoteLabel(note.getLabel());
+                    noteHolder.setNoteContent(note.getContent());
 
-                    tagHolder.view.setOnClickListener(new View.OnClickListener() {
+                    noteHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            mCallback.onTagSelected(adapter.getRef(position).getKey());
+                            Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
+                            openNoteIntent.putExtra("key", adapter.getRef(position).getKey());
+                            openNoteIntent.putExtra("lookup", "notes");
+                            startActivity(openNoteIntent);
                         }
                     });
                 }
@@ -85,20 +86,6 @@ public class TagsFragment extends Fragment {
         @Override
         protected void onPostExecute(Boolean result) {
             recyclerView.setAdapter(adapter);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        // This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (OnTagSelectedListener) getActivity();
-        } catch (ClassCastException e) {
-            throw new ClassCastException(getActivity().toString()
-                    + " must implement OnTagSelectedListener");
         }
     }
 }
