@@ -149,6 +149,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setIsSmartLockEnabled(false)
+                            .setTheme(R.style.AppTheme)
                             .build(),
                     RC_SIGN_IN);
         }
