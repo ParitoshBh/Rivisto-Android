@@ -102,7 +102,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
             if (resultCode == RESULT_OK) {
                 // user is signed in!
                 Log.i(LOG_NEW_ACCOUNT, "User Signed In");
-                String userKey = FirebaseDatabase.getInstance().getReference("/").push().getKey();
+                String userKey = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 Log.i(LOG_NEW_ACCOUNT, userKey);
                 saveCredentialsAndInitFirebase(null, null, null, userKey, true);
             } else {

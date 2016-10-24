@@ -4,4 +4,7 @@
         android:key="@string/settings_reset"
         android:summary="This resets application. Notes remain intact."
         android:title="Reset Rivisto" />
+    <Preference
+        android:key="@string/settings_sign_out"
+        android:title="Sign Out" />
 </PreferenceScreen>
