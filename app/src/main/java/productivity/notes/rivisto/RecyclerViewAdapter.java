@@ -19,14 +19,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView noteTitle;
         TextView noteContent;
-        TextView noteLabel;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             noteTitle = (TextView) itemView.findViewById(R.id.noteTitle);
             noteContent = (TextView) itemView.findViewById(R.id.noteContent);
-            noteLabel = (TextView) itemView.findViewById(R.id.noteLabel);
         }
     }
 

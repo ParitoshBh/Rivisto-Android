@@ -69,7 +69,6 @@ public class TagNotesFragment extends Fragment {
                 @Override
                 public void populateViewHolder(NoteHolder noteHolder, Note note, final int position) {
                     noteHolder.setNoteTitle(note.getTitle());
-                    noteHolder.setNoteLabel(note.getLabel());
                     noteHolder.setNoteContent(note.getContent());
 
                     noteHolder.view.setOnClickListener(new View.OnClickListener() {
