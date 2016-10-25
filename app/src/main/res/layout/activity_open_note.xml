@@ -37,6 +37,7 @@
             android:hint="@string/note_title_hint"
             android:inputType="text|textNoSuggestions"
             android:maxLines="2"
+            android:textColor="@color/colorNoteCardText"
             android:textColorHint="@android:color/darker_gray"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -49,10 +50,11 @@
             android:layout_marginLeft="7dp"
             android:layout_marginRight="7dp"
             android:layout_marginTop="5dp"
-            android:inputType="textMultiLine|textNoSuggestions"
             android:background="@android:color/transparent"
             android:gravity="start"
             android:hint="@string/note_content_long_hint"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:textColor="@color/colorNoteCardText"
             android:textSize="15sp" />
 
     </RelativeLayout>
