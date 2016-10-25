@@ -15,12 +15,6 @@
         android:title="@string/action_create_note"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_view_labels"
-        android:icon="@drawable/ic_label_white_24dp"
-        android:orderInCategory="100"
-        android:title="@string/action_view_labels"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/action_view_trash"
         android:orderInCategory="100"
         android:title="@string/action_view_trash"
