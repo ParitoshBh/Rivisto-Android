@@ -46,7 +46,7 @@
         </activity>
         <activity
             android:name=".TagsActivity"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".SearchNotesActivity"
             android:label="Tags"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
