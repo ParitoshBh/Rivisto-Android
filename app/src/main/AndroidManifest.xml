@@ -61,6 +61,12 @@
             android:label="Tags"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
+        <activity
+            android:name=".SearchNotesActivity"
+            android:parentActivityName=".MainActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>

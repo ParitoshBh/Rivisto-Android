@@ -1,18 +1,12 @@
 package productivity.notes.rivisto;
 
 import android.app.Fragment;
-import android.app.SearchManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +20,6 @@ import com.google.firebase.database.DatabaseReference;
 public class NotesFragment extends Fragment {
     private DatabaseReference firebaseRef;
     private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
-    private FloatingActionButton floatingActionButton;
     private RecyclerView recyclerView;
     private String userKey;
 
@@ -41,7 +34,6 @@ public class NotesFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
         final Bundle bundle = this.getArguments();
@@ -54,13 +46,6 @@ public class NotesFragment extends Fragment {
             firebaseRef = ((MainActivity)getActivity()).getFirebaseDatabase().getReference("/notes");
         }
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openNoteActivity("null", "notes", userKey);
-            }
-        });
-
         new getNotes().execute();
 
         return view;
@@ -69,14 +54,6 @@ public class NotesFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
-
-        MenuItem searchItem = menu.findItem(R.id.action_search_notes);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        ComponentName componentName = new ComponentName(getActivity(), SearchActivity.class);
-
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName));
     }
 
     @Override
@@ -98,6 +75,13 @@ public class NotesFragment extends Fragment {
                 openTrashIntent.putExtra(getString(R.string.userKey), userKey);
                 startActivity(openTrashIntent);
                 break;
+            case R.id.action_search:
+                Intent searchNotesIntent = new Intent(getActivity(), SearchNotesActivity.class);
+                startActivity(searchNotesIntent);
+                break;
+            case R.id.action_create_note:
+                openNoteActivity("null", "notes", userKey);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -118,7 +102,6 @@ public class NotesFragment extends Fragment {
                 @Override
                 public void populateViewHolder(NoteHolder noteHolder, Note note, final int position) {
                     noteHolder.setNoteTitle(note.getTitle());
-                    noteHolder.setNoteLabel(note.getLabel());
                     noteHolder.setNoteContent(note.getContent());
 
                     noteHolder.view.setOnClickListener(new View.OnClickListener() {
