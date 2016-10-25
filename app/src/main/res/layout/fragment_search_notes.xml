@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="10sp"
+        android:layout_marginBottom="5sp"
         android:text="Tags"
         android:textColor="@color/colorToolbarTitle" />
 
@@ -25,15 +25,40 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/recycler_view"
-        android:layout_marginTop="10sp"
+        android:layout_marginTop="5sp"
         android:clickable="true"
         android:text="MORE"
         android:textColor="@color/colorToolbarTitle" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_search_results"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/moreTags" />
+        android:layout_below="@+id/moreTags">
+
+        <TextView
+            android:id="@+id/separator"
+            style="@style/Separator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8sp" />
+
+        <TextView
+            android:id="@+id/placeholderSearchResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/separator"
+            android:layout_marginBottom="5sp"
+            android:layout_marginTop="2sp"
+            android:text="Search Results"
+            android:textColor="@color/colorToolbarTitle" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_search_results"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/placeholderSearchResult" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

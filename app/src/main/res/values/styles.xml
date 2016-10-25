@@ -16,5 +16,8 @@
     <style name="Underline">
         <item name="android:background">@drawable/underline_tag</item>
     </style>
+    <style name="Separator">
+        <item name="android:background">@drawable/separator</item>
+    </style>
 
 </resources>
