@@ -20,9 +20,14 @@
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <EditText
+                android:id="@+id/noteSearchQuery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Search notes" />
+                android:hint="Search notes"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textColor="@color/colorNoteCardText" />
 
         </android.support.v7.widget.Toolbar>
 
