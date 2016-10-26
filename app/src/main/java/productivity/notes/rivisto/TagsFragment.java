@@ -65,7 +65,7 @@ public class TagsFragment extends Fragment {
             adapter = new FirebaseRecyclerAdapter<Tag, TagHolder>(Tag.class, R.layout.tag, TagHolder.class, firebaseRef) {
                 @Override
                 public void populateViewHolder(TagHolder tagHolder, Tag tag, final int position) {
-                    tagHolder.setTagName(adapter.getRef(position).getKey());
+                    tagHolder.setTagName('#' + adapter.getRef(position).getKey());
 
                     tagHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
