@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -35,6 +36,7 @@ import productivity.notes.rivisto.utils.Helpers;
 public class SearchNotesFragment extends Fragment implements TextView.OnEditorActionListener, View.OnClickListener {
     private EditText noteSearchQuery;
     private TextView moreTags;
+    private RelativeLayout relativeLayoutSearchResults;
     private String userKey;
     private RecyclerView recyclerView, recyclerViewSearch;
     private FirebaseRecyclerAdapter<Tag, TagHolder> adapter;
@@ -54,7 +56,8 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerViewSearch = (RecyclerView) view.findViewById(R.id.recycler_view_search_results);
         noteSearchQuery = (EditText) getActivity().findViewById(R.id.noteSearchQuery);
-        moreTags = (TextView) (TextView) view.findViewById(R.id.moreTags);
+        moreTags = (TextView) view.findViewById(R.id.moreTags);
+        relativeLayoutSearchResults = (RelativeLayout) view.findViewById(R.id.relativeLayoutSearchResults);
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences("FirebaseCredentials", Context.MODE_PRIVATE);
         userKey = sharedPref.getString(getString(R.string.userKey), null);
@@ -137,6 +140,9 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
         @Override
         protected void onPreExecute() {
             notes = new ArrayList<>();
+            if (relativeLayoutSearchResults.getVisibility() == View.INVISIBLE) {
+                relativeLayoutSearchResults.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
@@ -185,12 +191,12 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.moreTags){
+        if (view.getId() == R.id.moreTags) {
             openTagsActivity();
         }
     }
 
-    private void openTagsActivity(){
+    private void openTagsActivity() {
         Intent openTagsIntent = new Intent(getActivity(), TagsActivity.class);
         openTagsIntent.putExtra(getString(R.string.userKey), userKey);
         startActivity(openTagsIntent);

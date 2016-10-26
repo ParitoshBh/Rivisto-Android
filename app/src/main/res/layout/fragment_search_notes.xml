@@ -31,9 +31,11 @@
         android:textColor="@color/colorToolbarTitle" />
 
     <RelativeLayout
+        android:id="@+id/relativeLayoutSearchResults"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/moreTags">
+        android:layout_below="@+id/moreTags"
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/separator"
