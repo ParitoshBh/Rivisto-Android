@@ -2,19 +2,25 @@ package productivity.notes.rivisto;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.FirebaseDatabase;
 
+import productivity.notes.rivisto.configure.ConfigureFragment;
+
 public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private FirebaseApp firebaseApp;
     private SharedPreferences sharedPref;
+    private static final int PERMISSION_REQUEST_CAMERA = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             getFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, new ConfigureFragment())
+                    .replace(R.id.fragment_container, new ConfigureFragment(), "ConfigureFragment")
                     .commit();
         }
 
@@ -92,4 +98,24 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.i("CameraPermission", "Permission Result. Code -> " + requestCode);
+
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CAMERA:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+                    ((ConfigureFragment) getFragmentManager()
+                            .findFragmentByTag("ConfigureFragment"))
+                            .openQRCodeActivity();
+                } else {
+                    // permission denied, boo!
+                    Toast.makeText(this, "Oops. Rivisto needs camera to scan QR code and setup automagically.", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
 }
