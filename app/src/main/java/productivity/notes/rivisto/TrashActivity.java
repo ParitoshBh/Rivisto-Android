@@ -84,6 +84,7 @@ public class TrashActivity extends AppCompatActivity {
                 @Override
                 public void populateViewHolder(NoteHolder noteHolder, Note note, final int position) {
                     noteHolder.setNoteTitle(note.getTitle());
+                    noteHolder.setNoteContent(note.getContent());
 
                     noteHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
