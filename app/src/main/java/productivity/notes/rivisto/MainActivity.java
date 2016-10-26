@@ -17,7 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import productivity.notes.rivisto.configure.ConfigureFragment;
 
 public class MainActivity extends AppCompatActivity {
-    private FirebaseDatabase firebaseDatabase;
+    private static FirebaseDatabase firebaseDatabase;
     private FirebaseApp firebaseApp;
     private SharedPreferences sharedPref;
     private static final int PERMISSION_REQUEST_CAMERA = 3;
@@ -61,7 +61,10 @@ public class MainActivity extends AppCompatActivity {
         //Log.i("FirebaseApps", FirebaseApp.getApps(this).toString());
 
         if (isAccountHolder) {
-            firebaseDatabase = FirebaseDatabase.getInstance();
+            if (firebaseDatabase == null) {
+                firebaseDatabase = FirebaseDatabase.getInstance();
+                firebaseDatabase.setPersistenceEnabled(true);
+            }
         } else {
             //Log.i("FirebaseInstance", FirebaseApp.getApps(this).size() + "");
 
@@ -73,9 +76,11 @@ public class MainActivity extends AppCompatActivity {
                         .build();
                 firebaseApp = FirebaseApp.initializeApp(this, options, "Firebase");
                 firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
+                firebaseDatabase.setPersistenceEnabled(true);
             } else {
                 firebaseApp = FirebaseApp.getInstance("Firebase");
                 firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
+                firebaseDatabase.setPersistenceEnabled(true);
             }
         }
     }
