@@ -39,7 +39,7 @@
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
-            android:name=".QRCodeReaderActivity"
+            android:name=".configure.QRCodeReaderActivity"
             android:parentActivityName=".MainActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" >

@@ -1,4 +1,4 @@
-package productivity.notes.rivisto;
+package productivity.notes.rivisto.configure;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,8 @@ import com.dlazaro66.qrcodereaderview.QRCodeReaderView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import productivity.notes.rivisto.R;
 
 public class QRCodeReaderActivity extends Activity implements QRCodeReaderView.OnQRCodeReadListener {
 
