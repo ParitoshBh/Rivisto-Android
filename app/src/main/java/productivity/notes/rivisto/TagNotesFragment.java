@@ -37,7 +37,7 @@ public class TagNotesFragment extends Fragment {
         tagName = args.getString("tagName", "Nothing");
         userKey = args.getString(getString(R.string.userKey), null);
 
-        ((TagsActivity) getActivity()).getSupportActionBar().setTitle("Filed in " + tagName);
+        ((SearchNotesActivity) getActivity()).getSupportActionBar().setTitle(tagName);
 
         if (userKey == null) {
             FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");

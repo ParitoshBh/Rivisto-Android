@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +32,7 @@ public class TagsFragment extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        ((TagsActivity) getActivity()).getSupportActionBar().setTitle("Tags");
+        ((SearchNotesActivity) getActivity()).getSupportActionBar().setTitle("All Tags");
 
         Bundle bundle = this.getArguments();
         userKey = bundle.getString(getString(R.string.userKey) ,null);
@@ -56,7 +56,7 @@ public class TagsFragment extends Fragment {
         protected void onPreExecute() {
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 4));
         }
 
         @Override

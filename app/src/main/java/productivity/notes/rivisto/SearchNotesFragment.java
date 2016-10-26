@@ -2,7 +2,6 @@ package productivity.notes.rivisto;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,10 +39,10 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
     private String userKey;
     private RecyclerView recyclerView, recyclerViewSearch;
     private FirebaseRecyclerAdapter<Tag, TagHolder> adapter;
-    private RecyclerViewAdapter recyclerViewAdapter;
     private DatabaseReference firebaseRef, firebaseNotesRef;
     private ArrayList<Note> notes;
     private static final String LOG_SEARCH = "SearchEvent";
+    private static final String LOG_TAG_CLICK = "TagClick";
 
     public SearchNotesFragment() {
     }
@@ -75,6 +74,10 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
 
         new getTags().execute();
 
+        if (noteSearchQuery.getVisibility() == View.GONE) {
+            noteSearchQuery.setVisibility(View.VISIBLE);
+        }
+
         noteSearchQuery.setOnEditorActionListener(this);
 
         moreTags.setOnClickListener(this);
@@ -104,7 +107,8 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
                     tagHolder.view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            //openTagNotesFragment(adapter.getRef(position).getKey());
+                            //Log.i(LOG_TAG_CLICK, adapter.getRef(position).getKey());
+                            openTagNotesFragment(userKey, adapter.getRef(position).getKey());
                         }
                     });
                 }
@@ -192,13 +196,41 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.moreTags) {
-            openTagsActivity();
+            noteSearchQuery.setVisibility(View.GONE);
+            Helpers.hideKeyboard(getActivity(), getView());
+            openTagsFragment(userKey);
         }
     }
 
-    private void openTagsActivity() {
-        Intent openTagsIntent = new Intent(getActivity(), TagsActivity.class);
-        openTagsIntent.putExtra(getString(R.string.userKey), userKey);
-        startActivity(openTagsIntent);
+    private void openTagsFragment(String userKey) {
+        TagsFragment tagsFragment = new TagsFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.userKey), userKey);
+
+        tagsFragment.setArguments(bundle);
+
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, tagsFragment)
+                .addToBackStack("SearchNotesFragment")
+                .commit();
+    }
+
+    private void openTagNotesFragment(String userKey, String tagName) {
+        noteSearchQuery.setVisibility(View.GONE);
+        Helpers.hideKeyboard(getActivity(), getView());
+
+        TagNotesFragment newFragment = new TagNotesFragment();
+        Bundle args = new Bundle();
+        args.putString(getString(R.string.userKey), userKey);
+        args.putString("tagName", tagName);
+        newFragment.setArguments(args);
+
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, newFragment)
+                .addToBackStack("TagNotesFragment")
+                .commit();
     }
 }
