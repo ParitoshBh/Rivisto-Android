@@ -17,7 +17,6 @@ import android.widget.EditText;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import static android.app.Activity.RESULT_OK;
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
@@ -149,7 +148,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
                             .setIsSmartLockEnabled(false)
-                            .setTheme(R.style.AppTheme)
+                            .setTheme(R.style.FirebaseUITheme)
                             .build(),
                     RC_SIGN_IN);
         }
