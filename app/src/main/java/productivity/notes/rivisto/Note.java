@@ -5,6 +5,7 @@ class Note {
     private String content;
     private String label;
     private Long time;
+    private String noteKey;
 
     public Note() {
     }
@@ -30,5 +31,13 @@ class Note {
 
     public Long getTime() {
         return time;
+    }
+
+    public void setNoteKey(String noteKey){
+        this.noteKey = noteKey;
+    }
+
+    public String getNoteKey(){
+        return noteKey;
     }
 }

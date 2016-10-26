@@ -2,6 +2,7 @@ package productivity.notes.rivisto;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,7 +33,8 @@ import java.util.ArrayList;
 
 import productivity.notes.rivisto.utils.Helpers;
 
-public class SearchNotesFragment extends Fragment implements TextView.OnEditorActionListener, View.OnClickListener {
+public class SearchNotesFragment extends Fragment implements TextView.OnEditorActionListener, View.OnClickListener,
+        RecyclerViewAdapter.ViewHolder.ClickListener {
     private EditText noteSearchQuery;
     private TextView moreTags;
     private RelativeLayout relativeLayoutSearchResults;
@@ -43,6 +45,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
     private ArrayList<Note> notes;
     private static final String LOG_SEARCH = "SearchEvent";
     private static final String LOG_TAG_CLICK = "TagClick";
+    private static final String LOG_NOTE_CLICK = "NoteClick";
 
     public SearchNotesFragment() {
     }
@@ -159,6 +162,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Note note = dataSnapshot.getValue(Note.class);
                     if (note.getTitle().toLowerCase().contains(searchQuery) || note.getContent().toLowerCase().contains(searchQuery)) {
+                        note.setNoteKey(dataSnapshot.getKey());
                         notes.add(note);
                     }
                 }
@@ -189,8 +193,14 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
 
         @Override
         protected void onPostExecute(Boolean result) {
-            recyclerViewSearch.setAdapter(new RecyclerViewAdapter(notes));
+            recyclerViewSearch.setAdapter(new RecyclerViewAdapter(notes, SearchNotesFragment.this));
         }
+    }
+
+    @Override
+    public void onItemClicked(String noteKey) {
+        //Log.i(LOG_NOTE_CLICK, "Clicked " + noteKey);
+        openNoteActivity(noteKey, "notes", userKey);
     }
 
     @Override
@@ -232,5 +242,13 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
                 .replace(R.id.fragment_container, newFragment)
                 .addToBackStack("TagNotesFragment")
                 .commit();
+    }
+
+    private void openNoteActivity(String key, String lookupType, String userKey){
+        Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
+        openNoteIntent.putExtra("key", key);
+        openNoteIntent.putExtra("lookup", lookupType);
+        openNoteIntent.putExtra(getString(R.string.userKey), userKey);
+        startActivity(openNoteIntent);
     }
 }
