@@ -32,6 +32,8 @@ public class NotesFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
 
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.all_notes));
+
         setHasOptionsMenu(true);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
