@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="5sp"
-        android:text="Tags"
+        android:text="Frequent Tags"
         android:textColor="@color/colorToolbarTitle" />
 
     <android.support.v7.widget.RecyclerView
