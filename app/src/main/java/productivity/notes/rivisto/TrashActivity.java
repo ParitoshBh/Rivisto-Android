@@ -51,6 +51,8 @@ public class TrashActivity extends AppCompatActivity {
             firebaseRef = FirebaseDatabase.getInstance().getReference(userKey + "/trash");
         }
 
+        firebaseRef.keepSynced(true);
+
         new trashedNotes().execute();
     }
 

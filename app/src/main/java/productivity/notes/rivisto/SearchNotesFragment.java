@@ -75,6 +75,8 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
             firebaseNotesRef = firebaseDatabase.getReference(userKey + "/notes");
         }
 
+        firebaseRef.keepSynced(true);
+
         new getTags().execute();
 
         if (noteSearchQuery.getVisibility() == View.GONE) {

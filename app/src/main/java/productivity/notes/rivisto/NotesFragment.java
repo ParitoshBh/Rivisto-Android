@@ -47,6 +47,7 @@ public class NotesFragment extends Fragment {
         } else {
             firebaseRef = ((MainActivity)getActivity()).getFirebaseDatabase().getReference("/notes");
         }
+        firebaseRef.keepSynced(true);
 
         new getNotes().execute();
 
