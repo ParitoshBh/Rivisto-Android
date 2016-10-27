@@ -1,6 +1,8 @@
 package productivity.notes.rivisto;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,16 +16,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Date;
+
+import productivity.notes.rivisto.utils.Helpers;
 
 public class OpenNoteActivity extends AppCompatActivity {
     private DatabaseReference firebaseRef;
     private FirebaseDatabase firebaseDatabase;
     private EditText noteTitle, noteContent;
+    private CoordinatorLayout coordinatorLayout;
     private String noteKey, noteLookup, selectedNoteLabel, userKey;
+    private static final String NOTE_CREATED = "Created", NOTE_UPDATED = "Updated";
     private boolean isNewNote;
 
     @Override
@@ -34,6 +39,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayoutActivityOpenNote);
         noteTitle = (EditText) findViewById(R.id.openNoteTitle);
         noteContent = (EditText) findViewById(R.id.openNoteContent);
 
@@ -119,10 +125,10 @@ public class OpenNoteActivity extends AppCompatActivity {
             case R.id.action_save_note:
                 if (isNewNote) {
                     createNewNote();
-                    Toast.makeText(this, "Note created", Toast.LENGTH_SHORT).show();
+                    showConfirmationMessage(NOTE_CREATED);
                 } else {
                     updateNote();
-                    Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show();
+                    showConfirmationMessage(NOTE_UPDATED);
                 }
                 break;
             case R.id.action_delete_note:
@@ -130,7 +136,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                     Toast.makeText(this, "Note discarded", Toast.LENGTH_SHORT).show();
                 } else {
                     moveNoteToTrash();
-                    Toast.makeText(this, "Note moved to trash", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Note trashed", Toast.LENGTH_SHORT).show();
                 }
                 finish();
                 break;
@@ -243,14 +249,17 @@ public class OpenNoteActivity extends AppCompatActivity {
 
                     // Increment the note count
                     Tag tagObj = dataSnapshot.getValue(Tag.class);
-                    Long noteCount = tagObj.getNoteCount();
 
-                    noteCount -= 1L;
+                    if (tagObj != null){
+                        Long noteCount = tagObj.getNoteCount();
 
-                    if (noteCount < 1){
-                        firebaseDatabase.getReference("/tags/" + tag).removeValue();
-                    } else {
-                        firebaseDatabase.getReference("/tags/" + tag).setValue(new Tag(noteCount));
+                        noteCount -= 1L;
+
+                        if (noteCount < 1){
+                            firebaseDatabase.getReference("/tags/" + tag).removeValue();
+                        } else {
+                            firebaseDatabase.getReference("/tags/" + tag).setValue(new Tag(noteCount));
+                        }
                     }
 
                 }
@@ -267,14 +276,17 @@ public class OpenNoteActivity extends AppCompatActivity {
 
                     // Increment the note count
                     Tag tagObj = dataSnapshot.getValue(Tag.class);
-                    Long noteCount = tagObj.getNoteCount();
 
-                    noteCount -= 1L;
+                    if (tagObj != null){
+                        Long noteCount = tagObj.getNoteCount();
 
-                    if (noteCount < 1){
-                        firebaseDatabase.getReference(userKey + "/tags/" + tag).removeValue();
-                    } else {
-                        firebaseDatabase.getReference(userKey + "/tags/" + tag).setValue(new Tag(noteCount));
+                        noteCount -= 1L;
+
+                        if (noteCount < 1){
+                            firebaseDatabase.getReference(userKey + "/tags/" + tag).removeValue();
+                        } else {
+                            firebaseDatabase.getReference(userKey + "/tags/" + tag).setValue(new Tag(noteCount));
+                        }
                     }
 
                 }
@@ -419,4 +431,22 @@ public class OpenNoteActivity extends AppCompatActivity {
         return date.getTime();
     }
 
+    private void showConfirmationMessage(String type){
+        String confirmationMessage = "";
+
+        switch (type){
+            case NOTE_CREATED:
+                confirmationMessage = "Note created";
+                break;
+            case NOTE_UPDATED:
+                confirmationMessage = "Note updated";
+                break;
+        }
+
+        if (!Helpers.isConnectedToInternet(this)){
+            confirmationMessage = confirmationMessage.concat(", It'll be sync'd once you're online.");
+        }
+
+        Snackbar.make(coordinatorLayout, confirmationMessage, Snackbar.LENGTH_SHORT).show();
+    }
 }

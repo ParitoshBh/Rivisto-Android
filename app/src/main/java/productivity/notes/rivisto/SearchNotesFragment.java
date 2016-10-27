@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,6 +44,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
     private FirebaseRecyclerAdapter<Tag, TagHolder> adapter;
     private DatabaseReference firebaseRef, firebaseNotesRef;
     private ArrayList<Note> notes;
+    private ViewGroup viewGroup;
     private static final String LOG_SEARCH = "SearchEvent";
     private static final String LOG_TAG_CLICK = "TagClick";
     private static final String LOG_NOTE_CLICK = "NoteClick";
@@ -54,6 +56,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search_notes, container, false);
+        viewGroup = container;
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         recyclerViewSearch = (RecyclerView) view.findViewById(R.id.recycler_view_search_results);
@@ -133,6 +136,9 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
 
         if (i == EditorInfo.IME_ACTION_SEARCH) {
+            if (!Helpers.isConnectedToInternet(getActivity())){
+                Snackbar.make(viewGroup, "Search results are inaccurate. You're Offline.", Snackbar.LENGTH_LONG).show();
+            }
             performSearch();
         }
 

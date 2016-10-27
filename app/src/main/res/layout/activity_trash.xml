@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:id="@+id/coordinatorLayoutActivityTrash"
     tools:context="productivity.notes.rivisto.TrashActivity">
 
     <android.support.design.widget.AppBarLayout

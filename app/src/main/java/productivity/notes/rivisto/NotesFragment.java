@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,11 +18,14 @@ import android.view.ViewGroup;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 
+import productivity.notes.rivisto.utils.Helpers;
+
 public class NotesFragment extends Fragment {
     private DatabaseReference firebaseRef;
     private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
     private RecyclerView recyclerView;
     private String userKey;
+    private ViewGroup viewGroup;
 
     public NotesFragment() {
     }
@@ -31,6 +35,7 @@ public class NotesFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_notes, container, false);
+        viewGroup = container;
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.all_notes));
 
@@ -50,6 +55,8 @@ public class NotesFragment extends Fragment {
         firebaseRef.keepSynced(true);
 
         new getNotes().execute();
+
+        checkInternetConnectivity();
 
         return view;
     }
@@ -128,4 +135,9 @@ public class NotesFragment extends Fragment {
         startActivity(openNoteIntent);
     }
 
+    private void checkInternetConnectivity(){
+        if (!Helpers.isConnectedToInternet(getActivity())){
+            Snackbar.make(viewGroup, "You're Offline. Notes aren't sync'd.", Snackbar.LENGTH_LONG).show();
+        }
+    }
 }
