@@ -104,7 +104,8 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            adapter = new FirebaseRecyclerAdapter<Tag, TagHolder>(Tag.class, R.layout.tag, TagHolder.class, firebaseRef) {
+            adapter = new FirebaseRecyclerAdapter<Tag, TagHolder>(Tag.class, R.layout.tag, TagHolder.class,
+                    firebaseRef.orderByChild("noteCount").limitToLast(8)) {
                 @Override
                 public void populateViewHolder(TagHolder tagHolder, Tag tag, final int position) {
                     tagHolder.setTagName('#' + adapter.getRef(position).getKey());
