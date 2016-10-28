@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="productivity.notes.rivisto.MainActivity">
+    <item
+        android:id="@+id/action_manual_configure"
+        android:orderInCategory="100"
+        android:title="@string/action_manual_configure"
+        app:showAsAction="never" />
+</menu>
