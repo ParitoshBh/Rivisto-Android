@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-class NoteHolder extends RecyclerView.ViewHolder {
+public class NoteHolder extends RecyclerView.ViewHolder {
     View view;
     private TextView noteTitle;
     private TextView noteContent;

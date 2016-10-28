@@ -1,6 +1,6 @@
 package productivity.notes.rivisto;
 
-class Note {
+public class Note {
     private String title;
     private String content;
     private String label;
