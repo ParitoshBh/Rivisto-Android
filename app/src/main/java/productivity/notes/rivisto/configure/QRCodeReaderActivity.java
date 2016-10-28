@@ -38,13 +38,15 @@ public class QRCodeReaderActivity extends AppCompatActivity implements QRCodeRea
         mydecoderview.setAutofocusInterval(2000L);
 
         // Use this function to enable/disable Torch
-        mydecoderview.setTorchEnabled(true);
+        //mydecoderview.setTorchEnabled(true);
 
         // Use this function to set front camera preview
-        mydecoderview.setFrontCamera();
+        //mydecoderview.setFrontCamera();
 
         // Use this function to set back camera preview
         mydecoderview.setBackCamera();
+
+        mydecoderview.startCamera();
     }
 
     @Override
@@ -64,7 +66,23 @@ public class QRCodeReaderActivity extends AppCompatActivity implements QRCodeRea
             setResult(RESULT_CANCELED);
         }
 
-        mydecoderview.stopCamera();
+        //mydecoderview.stopCamera();
         finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mydecoderview != null) {
+            mydecoderview.stopCamera();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mydecoderview != null) {
+            mydecoderview.startCamera();
+        }
     }
 }

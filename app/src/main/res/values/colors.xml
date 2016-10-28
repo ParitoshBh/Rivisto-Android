@@ -5,4 +5,5 @@
     <color name="colorAccent">#03A9F4</color>
     <color name="colorToolbarTitle">#03A9F4</color>
     <color name="colorNoteCardText">#757575</color>
+    <color name="configureHelperText">#757575</color>
 </resources>

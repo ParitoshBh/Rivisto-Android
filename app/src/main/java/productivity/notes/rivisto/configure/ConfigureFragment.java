@@ -6,16 +6,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.FirebaseApp;
@@ -32,8 +35,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
     private static final String LOG_CAMERA_PERMISSION = "CameraPermission";
     private static final int QR_CODE_ACTIVITY_CODE = 2;
     private static final int PERMISSION_REQUEST_CAMERA = 3;
-    private EditText apiKey, messagingSenderID, databaseURL;
-    private Button configureRivisto, easyConnect, createAccount;
+    private Button automaticConfigure, managedAccount;
     private FirebaseApp firebaseApp;
 
     public ConfigureFragment() {
@@ -46,20 +48,36 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
         View view = inflater.inflate(R.layout.fragment_configure, container, false);
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.app_name));
+//        applyFontToToolbarTitle(((MainActivity) getActivity()).getToolbar());
 
-        apiKey = (EditText) view.findViewById(R.id.configureAPIKey);
-        messagingSenderID = (EditText) view.findViewById(R.id.configureMessagingSenderID);
-        databaseURL = (EditText) view.findViewById(R.id.configureDatabaseURL);
+        setHasOptionsMenu(true);
 
-        configureRivisto = (Button) view.findViewById(R.id.configureRivisto);
-        easyConnect = (Button) view.findViewById(R.id.easyConnect);
-        createAccount = (Button) view.findViewById(R.id.createAccount);
+        automaticConfigure = (Button) view.findViewById(R.id.automaticConfigure);
+        managedAccount = (Button) view.findViewById(R.id.managedAccount);
 
-        configureRivisto.setOnClickListener(this);
-        easyConnect.setOnClickListener(this);
-        createAccount.setOnClickListener(this);
+        automaticConfigure.setOnClickListener(this);
+        managedAccount.setOnClickListener(this);
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_configure, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemID = item.getItemId();
+
+        if (itemID == R.id.action_manual_configure){
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new ManualConfigFragment())
+                    .addToBackStack("ManualConfigFragment")
+                    .commit();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -67,14 +85,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
         int buttonID = view.getId();
 
         switch (buttonID) {
-            case R.id.configureRivisto:
-                String key = apiKey.getText().toString();
-                String senderID = messagingSenderID.getText().toString();
-                String url = databaseURL.getText().toString();
-
-                saveCredentialsAndInitFirebase(key, senderID, url, null, false);
-                break;
-            case R.id.easyConnect:
+            case R.id.automaticConfigure:
                 boolean cameraPermission = checkCameraPermission();
 
                 if (cameraPermission) {
@@ -86,7 +97,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
                     }, PERMISSION_REQUEST_CAMERA);
                 }
                 break;
-            case R.id.createAccount:
+            case R.id.managedAccount:
                 createNewAccount();
                 break;
         }
@@ -180,5 +191,22 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
                     RC_SIGN_IN);
         }
     }
+
+//    private void applyFontToToolbarTitle(Toolbar toolbar){
+//        for(int i = 0; i < toolbar.getChildCount(); i++){
+//            View view = toolbar.getChildAt(i);
+//            if(view instanceof TextView){
+//                TextView tv = (TextView) view;
+//                Typeface titleFont = Typeface.
+//                        createFromAsset(getActivity().getAssets(), "fonts/italianno_regular.otf");
+////                if(tv.getText().equals(toolbar.getTitle())){
+////                    tv.setTypeface(titleFont);
+////                    break;
+////                }
+//                tv.setTypeface(titleFont);
+//                tv.setTextSize(34);
+//            }
+//        }
+//    }
 
 }
