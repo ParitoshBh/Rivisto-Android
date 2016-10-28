@@ -9,18 +9,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="130sp"
+        android:layout_marginTop="120sp"
         android:background="@drawable/configure_button"
         android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/configure_automatic"
         android:textAllCaps="false"
         android:textColor="@color/colorAccent" />
 
+    <TextView
+        android:id="@+id/helperTextAutomaticConfigure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/automaticConfigure"
+        android:layout_marginTop="15sp"
+        android:gravity="center"
+        android:text="Configure your own Firebase account."
+        android:textColor="@color/configureHelperText"
+        android:textSize="12sp"
+        android:textStyle="italic" />
+
     <Button
         android:id="@+id/managedAccount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/automaticConfigure"
+        android:layout_below="@id/helperTextAutomaticConfigure"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50sp"
         android:background="@drawable/configure_button"
@@ -28,5 +40,16 @@
         android:text="@string/configure_managed_account"
         android:textAllCaps="false"
         android:textColor="@color/colorAccent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/managedAccount"
+        android:layout_marginTop="15sp"
+        android:gravity="center"
+        android:text="Use Rivisto managed account."
+        android:textColor="@color/configureHelperText"
+        android:textSize="12sp"
+        android:textStyle="italic" />
 
 </RelativeLayout>
