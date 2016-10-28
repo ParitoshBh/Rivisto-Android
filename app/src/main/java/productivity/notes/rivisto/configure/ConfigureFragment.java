@@ -29,6 +29,7 @@ import productivity.notes.rivisto.MainActivity;
 import productivity.notes.rivisto.R;
 import productivity.notes.rivisto.utils.Helpers;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
 
@@ -143,6 +144,8 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
                         null,
                         false
                 );
+            } else if (resultCode == RESULT_CANCELED){
+                Snackbar.make(view, "Unable to connect. Please try again.", Snackbar.LENGTH_SHORT).show();
             }
         } else if (requestCode == RC_SIGN_IN) {
             if (resultCode == RESULT_OK) {
@@ -155,6 +158,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
                 // user is not signed in. Maybe just wait for the user to press
                 // "sign in" again, or show a message
                 //Log.i(LOG_NEW_ACCOUNT, "User Could Not Sign In");
+                Snackbar.make(view, "Couldn't sign in. Please try again.", Snackbar.LENGTH_SHORT).show();
             }
         }
     }

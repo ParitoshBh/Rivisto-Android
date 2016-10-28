@@ -62,7 +62,7 @@ public class QRCodeReaderActivity extends AppCompatActivity implements QRCodeRea
 
             setResult(RESULT_OK, intent);
         } catch (JSONException e) {
-            Toast.makeText(this, "Unable to get the details", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Unable to get the details", Toast.LENGTH_SHORT).show();
             setResult(RESULT_CANCELED);
         }
 
