@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,20 +47,40 @@ public class ManualConfigFragment extends Fragment implements View.OnClickListen
     public void onClick(View view) {
         String googlePlayServicesStatus = Helpers.isGooglePlayServicesAvailable(getActivity());
 
-        if (googlePlayServicesStatus.equalsIgnoreCase("success")){
+        if (googlePlayServicesStatus.equalsIgnoreCase("success")) {
             int buttonID = view.getId();
 
             switch (buttonID) {
                 case R.id.configureRivisto:
-                    String key = apiKey.getText().toString();
-                    String senderID = messagingSenderID.getText().toString();
-                    String url = databaseURL.getText().toString();
-
-                    saveCredentialsAndInitFirebase(key, senderID, url, null, false);
+                    configureRivisto();
                     break;
             }
         } else {
             Snackbar.make(view, googlePlayServicesStatus, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    private void configureRivisto() {
+        String key = apiKey.getText().toString().trim();
+        String senderID = messagingSenderID.getText().toString().trim();
+        String url = databaseURL.getText().toString().trim();
+
+        boolean areFieldsComplete = checkFields(key, senderID, url);
+
+        if (areFieldsComplete) {
+            saveCredentialsAndInitFirebase(key, senderID, url, null, false);
+        } else {
+            Snackbar.make(view, "Check values and make sure url is correct", Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    private boolean checkFields(String key, String senderID, String url) {
+        // Check if values are empty
+        if (key.isEmpty() || senderID.isEmpty() || url.isEmpty()) {
+            return false;
+        } else {
+            // If values are not empty then check if url is valid
+            return Patterns.WEB_URL.matcher(url).matches();
         }
     }
 
