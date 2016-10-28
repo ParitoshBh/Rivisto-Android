@@ -109,10 +109,12 @@ public class NotesFragment extends Fragment {
                     noteHolder.setNoteTitle(note.getTitle());
                     noteHolder.setNoteContent(note.getContent());
 
-                    noteHolder.view.setOnClickListener(new View.OnClickListener() {
+                    final String noteKey = getRef(position).getKey();
+
+                    noteHolder.bindClickToNote(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            openNoteActivity(adapter.getRef(position).getKey(), "notes", userKey);
+                            openNoteActivity(noteKey, "notes", userKey);
                         }
                     });
                 }

@@ -27,4 +27,8 @@ class NoteHolder extends RecyclerView.ViewHolder {
     public View getView() {
         return view;
     }
+
+    public void bindClickToNote(View.OnClickListener clickListener){
+        view.setOnClickListener(clickListener);
+    }
 }
