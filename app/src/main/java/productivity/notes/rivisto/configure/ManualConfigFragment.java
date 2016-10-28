@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,12 @@ import android.widget.EditText;
 
 import productivity.notes.rivisto.MainActivity;
 import productivity.notes.rivisto.R;
+import productivity.notes.rivisto.utils.Helpers;
 
 public class ManualConfigFragment extends Fragment implements View.OnClickListener {
     private EditText apiKey, messagingSenderID, databaseURL;
     private Button configureRivisto;
+    private View view;
 
     public ManualConfigFragment() {
     }
@@ -24,7 +27,7 @@ public class ManualConfigFragment extends Fragment implements View.OnClickListen
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_manual_config, container, false);
+        view = inflater.inflate(R.layout.fragment_manual_config, container, false);
 
         setHasOptionsMenu(false);
 
@@ -41,16 +44,22 @@ public class ManualConfigFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        int buttonID = view.getId();
+        String googlePlayServicesStatus = Helpers.isGooglePlayServicesAvailable(getActivity());
 
-        switch (buttonID) {
-            case R.id.configureRivisto:
-                String key = apiKey.getText().toString();
-                String senderID = messagingSenderID.getText().toString();
-                String url = databaseURL.getText().toString();
+        if (googlePlayServicesStatus.equalsIgnoreCase("success")){
+            int buttonID = view.getId();
 
-                saveCredentialsAndInitFirebase(key, senderID, url, null, false);
-                break;
+            switch (buttonID) {
+                case R.id.configureRivisto:
+                    String key = apiKey.getText().toString();
+                    String senderID = messagingSenderID.getText().toString();
+                    String url = databaseURL.getText().toString();
+
+                    saveCredentialsAndInitFirebase(key, senderID, url, null, false);
+                    break;
+            }
+        } else {
+            Snackbar.make(view, googlePlayServicesStatus, Snackbar.LENGTH_LONG).show();
         }
     }
 

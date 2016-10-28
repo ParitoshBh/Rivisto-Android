@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import productivity.notes.rivisto.MainActivity;
 import productivity.notes.rivisto.R;
+import productivity.notes.rivisto.utils.Helpers;
 
 import static android.app.Activity.RESULT_OK;
 import static com.firebase.ui.auth.ui.AcquireEmailHelper.RC_SIGN_IN;
@@ -37,6 +39,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
     private static final int PERMISSION_REQUEST_CAMERA = 3;
     private Button automaticConfigure, managedAccount;
     private FirebaseApp firebaseApp;
+    private View view;
 
     public ConfigureFragment() {
     }
@@ -45,7 +48,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_configure, container, false);
+        view = inflater.inflate(R.layout.fragment_configure, container, false);
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.app_name));
 //        applyFontToToolbarTitle(((MainActivity) getActivity()).getToolbar());
@@ -82,24 +85,30 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
 
     @Override
     public void onClick(View view) {
-        int buttonID = view.getId();
+        String googlePlayServicesStatus = Helpers.isGooglePlayServicesAvailable(getActivity());
 
-        switch (buttonID) {
-            case R.id.automaticConfigure:
-                boolean cameraPermission = checkCameraPermission();
+        if (googlePlayServicesStatus.equalsIgnoreCase("success")){
+            int buttonID = view.getId();
 
-                if (cameraPermission) {
-                    openQRCodeActivity();
-                } else {
-                    // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{
-                            Manifest.permission.CAMERA
-                    }, PERMISSION_REQUEST_CAMERA);
-                }
-                break;
-            case R.id.managedAccount:
-                createNewAccount();
-                break;
+            switch (buttonID) {
+                case R.id.automaticConfigure:
+                    boolean cameraPermission = checkCameraPermission();
+
+                    if (cameraPermission) {
+                        openQRCodeActivity();
+                    } else {
+                        // No explanation needed, we can request the permission.
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{
+                                Manifest.permission.CAMERA
+                        }, PERMISSION_REQUEST_CAMERA);
+                    }
+                    break;
+                case R.id.managedAccount:
+                    createNewAccount();
+                    break;
+            }
+        } else {
+            Snackbar.make(view, googlePlayServicesStatus, Snackbar.LENGTH_LONG).show();
         }
     }
 
