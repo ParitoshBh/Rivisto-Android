@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +28,7 @@ public class NotesFragment extends Fragment {
     private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
     private RecyclerView recyclerView;
     private ImageView imagePlaceholder;
+    private ProgressBar progressBar;
     private String userKey;
     private ViewGroup viewGroup;
     private static final String LOG_DATA_OBSERVER = "DataObserver";
@@ -47,6 +49,7 @@ public class NotesFragment extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         imagePlaceholder = (ImageView) view.findViewById(R.id.imagePlaceholderEmptyNotes);
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
         final Bundle bundle = this.getArguments();
         userKey = bundle.getString(getString(R.string.userKey));
@@ -100,6 +103,7 @@ public class NotesFragment extends Fragment {
     private class getNotes extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -147,6 +151,10 @@ public class NotesFragment extends Fragment {
             };
 
             adapter.registerAdapterDataObserver(dataObserver);
+
+            checkEmptyState(adapter.getItemCount());
+
+            progressBar.setVisibility(View.GONE);
         }
     }
 
