@@ -2,6 +2,7 @@
     <string name="app_name">Rivisto</string>
     <string name="all_notes">All Notes</string>
     <string name="hint_apiKey"><font size="15">apiKey</font></string>
+    <string name="fragment_title_manual_configure">Manually Configure</string>
     <string name="hint_messagingSenderID"><font size="15">messagingSenderID</font></string>
     <string name="hint_databaseURL"><font size="15">databaseURL</font></string>
     <string name="button_configure">Configure</string>

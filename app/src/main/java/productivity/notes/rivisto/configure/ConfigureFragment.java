@@ -52,6 +52,7 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
         view = inflater.inflate(R.layout.fragment_configure, container, false);
 
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.app_name));
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 //        applyFontToToolbarTitle(((MainActivity) getActivity()).getToolbar());
 
         setHasOptionsMenu(true);

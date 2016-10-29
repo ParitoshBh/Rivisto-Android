@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.util.Patterns;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -30,7 +31,9 @@ public class ManualConfigFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_manual_config, container, false);
 
-        setHasOptionsMenu(false);
+        setHasOptionsMenu(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(getString(R.string.fragment_title_manual_configure));
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         apiKey = (EditText) view.findViewById(R.id.configureAPIKey);
         messagingSenderID = (EditText) view.findViewById(R.id.configureMessagingSenderID);
@@ -41,6 +44,19 @@ public class ManualConfigFragment extends Fragment implements View.OnClickListen
         configureRivisto.setOnClickListener(this);
 
         return view;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemID = item.getItemId();
+
+        switch (itemID){
+            case android.R.id.home:
+                getActivity().getFragmentManager().popBackStack();
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
