@@ -49,7 +49,7 @@ public class OpenNoteActivity extends AppCompatActivity {
 
         //Log.i("USER KEY", userKey);
 
-        if (userKey == null){
+        if (userKey == null) {
             FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");
             firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
         } else {
@@ -125,7 +125,6 @@ public class OpenNoteActivity extends AppCompatActivity {
             case R.id.action_save_note:
                 if (isNewNote) {
                     createNewNote();
-                    showConfirmationMessage(NOTE_CREATED);
                 } else {
                     updateNote();
                     showConfirmationMessage(NOTE_UPDATED);
@@ -156,20 +155,50 @@ public class OpenNoteActivity extends AppCompatActivity {
     }
 
     private void createNewNote() {
+        String title = noteTitle.getText().toString().trim();
+        String content = noteContent.getText().toString().trim();
+
+        // Note content can be left empty
+        // Note title cannot be empty
+        // If content is there and no title is entered, title is generated from content
+
+        // Check if title is left empty
+        if (title.isEmpty()) {
+            // Check if content of note is empty
+            if (content.isEmpty()){
+                // Show error message and do not save the note
+                Snackbar.make(coordinatorLayout, "Empty note cannot be saved", Snackbar.LENGTH_SHORT).show();
+            } else {
+                // Use first 5 words of content as title
+                title = generateTitleFromContent(content);
+                // Show title in note
+                noteTitle.setText(title);
+                saveNote(title, content);
+            }
+        } else {
+            saveNote(title, content);
+        }
+    }
+
+    private void saveNote(String title, String content){
         String newNoteKey = firebaseRef.push().getKey();
-        String noteLabel = extractTag(noteContent.getText().toString());
+        String label = extractTag(content);
+
         firebaseRef.child(newNoteKey)
                 .setValue(new Note(
-                        noteTitle.getText().toString(),
-                        noteContent.getText().toString(),
-                        noteLabel,
+                        title,
+                        content,
+                        label,
                         getCurrentTime()
                 ));
+
+        // Show confirmation message to user
+        showConfirmationMessage(NOTE_CREATED);
 
         // Update note key to newly created note key
         noteKey = newNoteKey;
 
-        selectedNoteLabel = noteLabel;
+        selectedNoteLabel = label;
 
         // Update isNewNote boolean. Note isn't a new one anymore.
         isNewNote = false;
@@ -182,9 +211,20 @@ public class OpenNoteActivity extends AppCompatActivity {
         }
 
         // Add tag to database is it is not null i.e. there is a tag present
-        if (noteLabel != null){
-            incrementTagNoteCount(noteLabel);
+        if (label != null) {
+            incrementTagNoteCount(label);
         }
+    }
+
+    private String generateTitleFromContent(String content) {
+        // Use first 5 words of content as note title
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String word:content.split(" ", 5)) {
+            stringBuilder.append(word).append(" ");
+        }
+
+        return stringBuilder.toString();
     }
 
     private void incrementTagNoteCount(final String tag) {
@@ -250,12 +290,12 @@ public class OpenNoteActivity extends AppCompatActivity {
                     // Increment the note count
                     Tag tagObj = dataSnapshot.getValue(Tag.class);
 
-                    if (tagObj != null){
+                    if (tagObj != null) {
                         Long noteCount = tagObj.getNoteCount();
 
                         noteCount -= 1L;
 
-                        if (noteCount < 1){
+                        if (noteCount < 1) {
                             firebaseDatabase.getReference("/tags/" + tag).removeValue();
                         } else {
                             firebaseDatabase.getReference("/tags/" + tag).setValue(new Tag(noteCount));
@@ -277,12 +317,12 @@ public class OpenNoteActivity extends AppCompatActivity {
                     // Increment the note count
                     Tag tagObj = dataSnapshot.getValue(Tag.class);
 
-                    if (tagObj != null){
+                    if (tagObj != null) {
                         Long noteCount = tagObj.getNoteCount();
 
                         noteCount -= 1L;
 
-                        if (noteCount < 1){
+                        if (noteCount < 1) {
                             firebaseDatabase.getReference(userKey + "/tags/" + tag).removeValue();
                         } else {
                             firebaseDatabase.getReference(userKey + "/tags/" + tag).setValue(new Tag(noteCount));
@@ -299,12 +339,12 @@ public class OpenNoteActivity extends AppCompatActivity {
         }
     }
 
-    private void adjustTagNoteCount(String oldLabel, String newLabel){
-        if (oldLabel != null){
+    private void adjustTagNoteCount(String oldLabel, String newLabel) {
+        if (oldLabel != null) {
             decrementTagNoteCount(oldLabel);
         }
 
-        if (newLabel != null){
+        if (newLabel != null) {
             incrementTagNoteCount(newLabel);
         }
     }
@@ -320,7 +360,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                         getCurrentTime()
                 ));
 
-        if (updatedNoteLabel != selectedNoteLabel){
+        if (updatedNoteLabel != selectedNoteLabel) {
             adjustTagNoteCount(selectedNoteLabel, updatedNoteLabel);
         }
 
@@ -431,10 +471,10 @@ public class OpenNoteActivity extends AppCompatActivity {
         return date.getTime();
     }
 
-    private void showConfirmationMessage(String type){
+    private void showConfirmationMessage(String type) {
         String confirmationMessage = "";
 
-        switch (type){
+        switch (type) {
             case NOTE_CREATED:
                 confirmationMessage = "Note created";
                 break;
@@ -443,7 +483,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                 break;
         }
 
-        if (!Helpers.isConnectedToInternet(this)){
+        if (!Helpers.isConnectedToInternet(this)) {
             confirmationMessage = confirmationMessage.concat(", It'll be sync'd once you're online.");
         }
 
