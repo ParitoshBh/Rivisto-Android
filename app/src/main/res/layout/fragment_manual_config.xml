@@ -4,48 +4,69 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/configureAPIKey"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayoutAPIKey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp"
-        android:ems="10"
-        android:hint="apiKey"
-        android:inputType="text|textNoSuggestions" />
+        android:layout_marginTop="70dp">
 
-    <EditText
-        android:id="@+id/configureMessagingSenderID"
+        <EditText
+            android:id="@+id/configureAPIKey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/hint_apiKey"
+            android:inputType="text|textNoSuggestions" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayoutMessagingSenderID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/configureAPIKey"
-        android:layout_below="@+id/configureAPIKey"
-        android:layout_marginTop="40dp"
-        android:ems="10"
-        android:hint="messagingSenderId"
-        android:inputType="text|textNoSuggestions" />
+        android:layout_alignEnd="@+id/textInputLayoutAPIKey"
+        android:layout_below="@+id/textInputLayoutAPIKey"
+        android:layout_marginTop="40dp">
 
-    <EditText
-        android:id="@+id/configureDatabaseURL"
+        <EditText
+            android:id="@+id/configureMessagingSenderID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/hint_messagingSenderID"
+            android:inputType="number" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayoutDatabaseURL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/configureMessagingSenderID"
-        android:layout_below="@+id/configureMessagingSenderID"
-        android:layout_marginTop="40dp"
-        android:ems="10"
-        android:hint="databaseURL"
-        android:inputType="text|textNoSuggestions" />
+        android:layout_alignEnd="@+id/textInputLayoutMessagingSenderID"
+        android:layout_below="@+id/textInputLayoutMessagingSenderID"
+        android:layout_marginTop="40dp">
+
+        <EditText
+            android:id="@+id/configureDatabaseURL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/hint_databaseURL"
+            android:inputType="textUri" />
+
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/configureRivisto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/configureDatabaseURL"
+        android:layout_below="@+id/textInputLayoutDatabaseURL"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30sp"
         android:background="@drawable/configure_button"
-        android:text="Configure"
+        android:text="@string/button_configure"
         android:textAllCaps="false"
         android:textColor="@color/colorAccent" />
 
