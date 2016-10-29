@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                             .openQRCodeActivity();
                 } else {
                     // permission denied, boo!
-                    Snackbar.make(coordinatorLayout, "Camera permission is required for automatic setup", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(coordinatorLayout, "Camera permission is required for setup", Snackbar.LENGTH_LONG).show();
                 }
                 break;
         }
