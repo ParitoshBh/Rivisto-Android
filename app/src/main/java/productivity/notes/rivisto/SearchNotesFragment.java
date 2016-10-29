@@ -129,6 +129,10 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
         @Override
         protected void onPostExecute(Boolean result) {
             recyclerView.setAdapter(adapter);
+
+            if (adapter.getItemCount() <= 8){
+                moreTags.setVisibility(View.GONE);
+            }
         }
     }
 
