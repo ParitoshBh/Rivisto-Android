@@ -46,7 +46,7 @@
         <activity
             android:name=".configure.QRCodeReaderActivity"
             android:parentActivityName=".MainActivity"
-            android:label="Automatic Config."
+            android:label="Automatic Configure"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity

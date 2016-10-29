@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private static FirebaseDatabase firebaseDatabase;
     private FirebaseApp firebaseApp;
     private SharedPreferences sharedPref;
+    private CoordinatorLayout coordinatorLayout;
     private static final int PERMISSION_REQUEST_CAMERA = 3;
 
     @Override
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle(getString(R.string.all_notes));
 
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayoutActivityMain);
         sharedPref = this.getSharedPreferences("FirebaseCredentials", Context.MODE_PRIVATE);
 
         if (sharedPref.getBoolean(getString(R.string.isConfigured), false)) {
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.i("CameraPermission", "Permission Result. Code -> " + requestCode);
+        //Log.i("CameraPermission", "Permission Result. Code -> " + requestCode);
 
         switch (requestCode) {
             case PERMISSION_REQUEST_CAMERA:
@@ -118,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                             .openQRCodeActivity();
                 } else {
                     // permission denied, boo!
-                    Toast.makeText(this, "Oops. Rivisto needs camera to scan QR code and setup automagically.", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(coordinatorLayout, "Camera permission is required for automatic setup", Snackbar.LENGTH_LONG).show();
                 }
                 break;
         }
