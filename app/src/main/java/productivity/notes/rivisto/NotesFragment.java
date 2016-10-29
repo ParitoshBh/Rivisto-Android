@@ -8,12 +8,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
@@ -24,8 +26,10 @@ public class NotesFragment extends Fragment {
     private DatabaseReference firebaseRef;
     private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
     private RecyclerView recyclerView;
+    private ImageView imagePlaceholder;
     private String userKey;
     private ViewGroup viewGroup;
+    private static final String LOG_DATA_OBSERVER = "DataObserver";
 
     public NotesFragment() {
     }
@@ -42,15 +46,16 @@ public class NotesFragment extends Fragment {
         setHasOptionsMenu(true);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        imagePlaceholder = (ImageView) view.findViewById(R.id.imagePlaceholderEmptyNotes);
 
         final Bundle bundle = this.getArguments();
         userKey = bundle.getString(getString(R.string.userKey));
 
-        if (bundle.getBoolean(getString(R.string.isAccountHolder), false)){
-            firebaseRef = ((MainActivity)getActivity()).getFirebaseDatabase()
+        if (bundle.getBoolean(getString(R.string.isAccountHolder), false)) {
+            firebaseRef = ((MainActivity) getActivity()).getFirebaseDatabase()
                     .getReference(userKey + "/notes/");
         } else {
-            firebaseRef = ((MainActivity)getActivity()).getFirebaseDatabase().getReference("/notes");
+            firebaseRef = ((MainActivity) getActivity()).getFirebaseDatabase().getReference("/notes");
         }
         firebaseRef.keepSynced(true);
 
@@ -70,7 +75,7 @@ public class NotesFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        switch (id){
+        switch (id) {
             case R.id.action_settings:
                 Intent openSettingsIntent = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(openSettingsIntent);
@@ -126,10 +131,26 @@ public class NotesFragment extends Fragment {
         @Override
         protected void onPostExecute(Boolean result) {
             recyclerView.setAdapter(adapter);
+
+            RecyclerView.AdapterDataObserver dataObserver = new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    //Log.i(LOG_DATA_OBSERVER, "Items - " + adapter.getItemCount());
+                    checkEmptyState(adapter.getItemCount());
+                }
+
+                @Override
+                public void onItemRangeRemoved(int positionStart, int itemCount) {
+                    //Log.i(LOG_DATA_OBSERVER, "Items - " + adapter.getItemCount());
+                    checkEmptyState(adapter.getItemCount());
+                }
+            };
+
+            adapter.registerAdapterDataObserver(dataObserver);
         }
     }
 
-    private void openNoteActivity(String key, String lookupType, String userKey){
+    private void openNoteActivity(String key, String lookupType, String userKey) {
         Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
         openNoteIntent.putExtra("key", key);
         openNoteIntent.putExtra("lookup", lookupType);
@@ -137,9 +158,23 @@ public class NotesFragment extends Fragment {
         startActivity(openNoteIntent);
     }
 
-    private void checkInternetConnectivity(){
-        if (!Helpers.isConnectedToInternet(getActivity())){
+    private void checkInternetConnectivity() {
+        if (!Helpers.isConnectedToInternet(getActivity())) {
             Snackbar.make(viewGroup, "You're Offline. Notes aren't sync'd.", Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    private void checkEmptyState(int count) {
+        if (count == 0) {
+            if (imagePlaceholder.getVisibility() != View.VISIBLE) {
+                recyclerView.setVisibility(View.GONE);
+                imagePlaceholder.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (recyclerView.getVisibility() != View.VISIBLE) {
+                recyclerView.setVisibility(View.VISIBLE);
+                imagePlaceholder.setVisibility(View.GONE);
+            }
         }
     }
 }
