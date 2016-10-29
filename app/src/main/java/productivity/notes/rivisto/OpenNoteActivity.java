@@ -127,7 +127,6 @@ public class OpenNoteActivity extends AppCompatActivity {
                     createNewNote();
                 } else {
                     updateNote();
-                    showConfirmationMessage(NOTE_UPDATED);
                 }
                 break;
             case R.id.action_delete_note:
@@ -350,15 +349,43 @@ public class OpenNoteActivity extends AppCompatActivity {
     }
 
     private void updateNote() {
-        String updatedNoteLabel = extractTag(noteContent.getText().toString());
+        String title = noteTitle.getText().toString().trim();
+        String content = noteContent.getText().toString().trim();
+
+        // Note content can be left empty
+        // Note title cannot be empty
+        // If content is there and no title is entered, title is generated from content
+
+        // Check if title is left empty
+        if (title.isEmpty()) {
+            // Check if content of note is empty
+            if (content.isEmpty()){
+                // Show error message and do not save the note
+                Snackbar.make(coordinatorLayout, "Empty note cannot be saved", Snackbar.LENGTH_SHORT).show();
+            } else {
+                // Use first 5 words of content as title
+                title = generateTitleFromContent(content);
+                // Show title in note
+                noteTitle.setText(title);
+                saveUpdatedNote(title, content);
+            }
+        } else {
+            saveUpdatedNote(title, content);
+        }
+    }
+
+    private void saveUpdatedNote(String title, String content){
+        String updatedNoteLabel = extractTag(content);
 
         firebaseRef.setValue(
                 new Note(
-                        noteTitle.getText().toString(),
-                        noteContent.getText().toString(),
+                        title,
+                        content,
                         updatedNoteLabel,
                         getCurrentTime()
                 ));
+
+        showConfirmationMessage(NOTE_UPDATED);
 
         if (updatedNoteLabel != selectedNoteLabel) {
             adjustTagNoteCount(selectedNoteLabel, updatedNoteLabel);
