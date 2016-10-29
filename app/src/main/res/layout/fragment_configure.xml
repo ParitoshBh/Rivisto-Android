@@ -11,7 +11,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="120sp"
         android:background="@drawable/configure_button"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/configure_automatic"
         android:textAllCaps="false"
         android:textColor="@color/colorAccent" />
@@ -36,7 +35,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50sp"
         android:background="@drawable/configure_button"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="@string/configure_managed_account"
         android:textAllCaps="false"
         android:textColor="@color/colorAccent" />

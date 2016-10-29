@@ -45,7 +45,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30sp"
         android:background="@drawable/configure_button"
-        android:foreground="?attr/selectableItemBackgroundBorderless"
         android:text="Configure"
         android:textAllCaps="false"
         android:textColor="@color/colorAccent" />
