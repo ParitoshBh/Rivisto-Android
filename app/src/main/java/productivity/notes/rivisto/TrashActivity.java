@@ -95,12 +95,15 @@ public class TrashActivity extends AppCompatActivity {
                     noteHolder.setNoteTitle(note.getTitle());
                     noteHolder.setNoteContent(note.getContent());
 
-                    noteHolder.view.setOnClickListener(new View.OnClickListener() {
+                    final String noteKey = getRef(position).getKey();
+
+                    noteHolder.bindClickToNote(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            openNoteActivity(adapter.getRef(position).getKey(), "trash", userKey);
+                            openNoteActivity(noteKey, "trash", userKey);
                         }
                     });
+
                 }
             };
 
