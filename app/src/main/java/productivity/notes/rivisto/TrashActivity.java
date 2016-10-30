@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.FirebaseApp;
@@ -28,6 +29,7 @@ public class TrashActivity extends AppCompatActivity {
     private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
     private DatabaseReference firebaseRef;
     private String userKey;
+    private ImageView placeholderTrash;
     private CoordinatorLayout coordinatorLayout;
 
     @Override
@@ -41,6 +43,7 @@ public class TrashActivity extends AppCompatActivity {
 
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayoutActivityTrash);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        placeholderTrash = (ImageView) findViewById(R.id.placeholderTrash);
 
         userKey = this.getIntent().getStringExtra(getString(R.string.userKey));
 
@@ -113,6 +116,24 @@ public class TrashActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             recyclerView.setAdapter(adapter);
+
+            RecyclerView.AdapterDataObserver dataObserver = new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    //Log.i(LOG_DATA_OBSERVER, "Items - " + adapter.getItemCount());
+                    checkEmptyState(adapter.getItemCount());
+                }
+
+                @Override
+                public void onItemRangeRemoved(int positionStart, int itemCount) {
+                    //Log.i(LOG_DATA_OBSERVER, "Items - " + adapter.getItemCount());
+                    checkEmptyState(adapter.getItemCount());
+                }
+            };
+
+            adapter.registerAdapterDataObserver(dataObserver);
+
+            checkEmptyState(adapter.getItemCount());
         }
     }
 
@@ -134,9 +155,24 @@ public class TrashActivity extends AppCompatActivity {
                 confirmationMessage = confirmationMessage.concat(", It'll be sync'd once you're online.");
             }
         } else {
-            confirmationMessage = "Trash is already empty!";
+            confirmationMessage = "Nothing to delete";
         }
 
         Snackbar.make(coordinatorLayout, confirmationMessage, Snackbar.LENGTH_SHORT).show();
     }
+
+    private void checkEmptyState(int count) {
+        if (count == 0) {
+            if (placeholderTrash.getVisibility() != View.VISIBLE) {
+                recyclerView.setVisibility(View.GONE);
+                placeholderTrash.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (recyclerView.getVisibility() != View.VISIBLE) {
+                recyclerView.setVisibility(View.VISIBLE);
+                placeholderTrash.setVisibility(View.GONE);
+            }
+        }
+    }
+
 }
