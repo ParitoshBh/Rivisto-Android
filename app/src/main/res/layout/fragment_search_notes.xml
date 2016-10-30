@@ -4,37 +4,45 @@
     android:layout_height="match_parent"
     android:padding="10sp">
 
-    <TextView
-        android:id="@+id/placeholderLabels"
+    <RelativeLayout
+        android:id="@+id/relativeLayoutTags"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="5sp"
-        android:text="@string/fragment_searchNotes_placeholder_frequent_tags"
-        android:textColor="@color/colorToolbarTitle" />
+        android:layout_height="wrap_content">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/placeholderLabels" />
+        <TextView
+            android:id="@+id/placeholderLabels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="5sp"
+            android:text="@string/fragment_searchNotes_placeholder_frequent_tags"
+            android:textColor="@color/colorToolbarTitle" />
 
-    <TextView
-        android:id="@+id/moreTags"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/recycler_view"
-        android:layout_marginTop="5sp"
-        android:clickable="true"
-        android:text="@string/fragment_searchNotes_placeholder_more"
-        android:textColor="@color/colorToolbarTitle" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/placeholderLabels" />
+
+        <TextView
+            android:id="@+id/moreTags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/recycler_view"
+            android:layout_marginTop="5sp"
+            android:clickable="true"
+            android:text="@string/fragment_searchNotes_placeholder_more"
+            android:textColor="@color/colorToolbarTitle" />
+
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/relativeLayoutSearchResults"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/moreTags"
+        android:layout_below="@+id/relativeLayoutTags"
         android:visibility="invisible">
 
         <TextView

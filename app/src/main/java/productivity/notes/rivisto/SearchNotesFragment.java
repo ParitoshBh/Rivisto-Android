@@ -38,7 +38,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
         RecyclerViewAdapter.ViewHolder.ClickListener {
     private EditText noteSearchQuery;
     private TextView moreTags, textViewPlaceholderSearchResult;
-    private RelativeLayout relativeLayoutSearchResults;
+    private RelativeLayout relativeLayoutSearchResults, relativeLayoutTags;
     private String userKey;
     private RecyclerView recyclerView, recyclerViewSearch;
     private FirebaseRecyclerAdapter<Tag, TagHolder> adapter;
@@ -63,6 +63,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
         noteSearchQuery = (EditText) getActivity().findViewById(R.id.noteSearchQuery);
         moreTags = (TextView) view.findViewById(R.id.moreTags);
         relativeLayoutSearchResults = (RelativeLayout) view.findViewById(R.id.relativeLayoutSearchResults);
+        relativeLayoutTags = (RelativeLayout) view.findViewById(R.id.relativeLayoutTags);
         textViewPlaceholderSearchResult = (TextView) view.findViewById(R.id.textViewPlaceholderSearchResult);
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences("FirebaseCredentials", Context.MODE_PRIVATE);
@@ -121,6 +122,8 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
                             openTagNotesFragment(userKey, adapter.getRef(position).getKey());
                         }
                     });
+
+                    toggleTagLayout(position);
                 }
             };
 
@@ -130,9 +133,21 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
         @Override
         protected void onPostExecute(Boolean result) {
             recyclerView.setAdapter(adapter);
+        }
+    }
 
-            if (adapter.getItemCount() <= 8){
-                moreTags.setVisibility(View.GONE);
+    private void toggleTagLayout(int tagCount) {
+        Log.i(LOG_TAG_CLICK, "Tag count - " + tagCount);
+
+        if (tagCount >= 0) {
+            if (tagCount < 8) {
+                if (moreTags.getVisibility() != View.GONE) {
+                    moreTags.setVisibility(View.GONE);
+                }
+            }
+
+            if (relativeLayoutTags.getVisibility() != View.VISIBLE) {
+                relativeLayoutTags.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -141,7 +156,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
 
         if (i == EditorInfo.IME_ACTION_SEARCH) {
-            if (!Helpers.isConnectedToInternet(getActivity())){
+            if (!Helpers.isConnectedToInternet(getActivity())) {
                 Snackbar.make(viewGroup, "Search results are inaccurate. You're Offline.", Snackbar.LENGTH_LONG).show();
             }
             performSearch();
@@ -164,6 +179,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
             if (relativeLayoutSearchResults.getVisibility() == View.INVISIBLE) {
                 relativeLayoutSearchResults.setVisibility(View.VISIBLE);
             }
+            toggleSearchResultsLayout(false);
         }
 
         @Override
@@ -178,6 +194,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
                     if (note.getTitle().toLowerCase().contains(searchQuery) || note.getContent().toLowerCase().contains(searchQuery)) {
                         note.setNoteKey(dataSnapshot.getKey());
                         notes.add(note);
+                        toggleSearchResultsLayout(true);
                     }
                 }
 
@@ -208,8 +225,17 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
         @Override
         protected void onPostExecute(Boolean result) {
             recyclerViewSearch.setAdapter(new RecyclerViewAdapter(notes, SearchNotesFragment.this));
+        }
+    }
 
-            if (notes.size() == 0){
+    private void toggleSearchResultsLayout(boolean visible) {
+        if (visible) {
+            if (recyclerViewSearch.getVisibility() != View.VISIBLE) {
+                textViewPlaceholderSearchResult.setVisibility(View.GONE);
+                recyclerViewSearch.setVisibility(View.VISIBLE);
+            }
+        } else {
+            if (recyclerViewSearch.getVisibility() != View.GONE) {
                 textViewPlaceholderSearchResult.setVisibility(View.VISIBLE);
                 recyclerViewSearch.setVisibility(View.GONE);
             }
@@ -263,7 +289,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
                 .commit();
     }
 
-    private void openNoteActivity(String key, String lookupType, String userKey){
+    private void openNoteActivity(String key, String lookupType, String userKey) {
         Intent openNoteIntent = new Intent(getActivity(), OpenNoteActivity.class);
         openNoteIntent.putExtra("key", key);
         openNoteIntent.putExtra("lookup", lookupType);
