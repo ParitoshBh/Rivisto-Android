@@ -106,7 +106,11 @@ public class ConfigureFragment extends Fragment implements View.OnClickListener 
                     }
                     break;
                 case R.id.managedAccount:
-                    createNewAccount();
+                    if (Helpers.isConnectedToInternet(getActivity())){
+                        createNewAccount();
+                    } else {
+                        Snackbar.make(view, "Internet connectivity is required", Snackbar.LENGTH_LONG).show();
+                    }
                     break;
             }
         } else {

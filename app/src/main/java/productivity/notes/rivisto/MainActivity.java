@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 firebaseApp = FirebaseApp.getInstance("Firebase");
                 firebaseDatabase = FirebaseDatabase.getInstance(firebaseApp);
-                firebaseDatabase.setPersistenceEnabled(true);
+                //firebaseDatabase.setPersistenceEnabled(true);
             }
         }
     }

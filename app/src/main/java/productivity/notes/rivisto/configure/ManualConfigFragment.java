@@ -1,6 +1,7 @@
 package productivity.notes.rivisto.configure;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -118,6 +119,8 @@ public class ManualConfigFragment extends Fragment implements View.OnClickListen
         editor.commit();
 
         ((MainActivity) getActivity()).initFirebase(key, senderID, url, accountHolder);
+
+        getActivity().getFragmentManager().popBackStack("ManualConfigFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         ((MainActivity) getActivity()).openNotesFragment(userKey, accountHolder);
     }
