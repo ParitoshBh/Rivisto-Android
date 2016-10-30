@@ -37,7 +37,7 @@ import productivity.notes.rivisto.utils.Helpers;
 public class SearchNotesFragment extends Fragment implements TextView.OnEditorActionListener, View.OnClickListener,
         RecyclerViewAdapter.ViewHolder.ClickListener {
     private EditText noteSearchQuery;
-    private TextView moreTags;
+    private TextView moreTags, textViewPlaceholderSearchResult;
     private RelativeLayout relativeLayoutSearchResults;
     private String userKey;
     private RecyclerView recyclerView, recyclerViewSearch;
@@ -63,6 +63,7 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
         noteSearchQuery = (EditText) getActivity().findViewById(R.id.noteSearchQuery);
         moreTags = (TextView) view.findViewById(R.id.moreTags);
         relativeLayoutSearchResults = (RelativeLayout) view.findViewById(R.id.relativeLayoutSearchResults);
+        textViewPlaceholderSearchResult = (TextView) view.findViewById(R.id.textViewPlaceholderSearchResult);
 
         SharedPreferences sharedPref = getActivity().getSharedPreferences("FirebaseCredentials", Context.MODE_PRIVATE);
         userKey = sharedPref.getString(getString(R.string.userKey), null);
@@ -207,6 +208,11 @@ public class SearchNotesFragment extends Fragment implements TextView.OnEditorAc
         @Override
         protected void onPostExecute(Boolean result) {
             recyclerViewSearch.setAdapter(new RecyclerViewAdapter(notes, SearchNotesFragment.this));
+
+            if (notes.size() == 0){
+                textViewPlaceholderSearchResult.setVisibility(View.VISIBLE);
+                recyclerViewSearch.setVisibility(View.GONE);
+            }
         }
     }
 

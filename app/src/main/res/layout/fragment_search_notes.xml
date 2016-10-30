@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="5sp"
-        android:text="Frequent Tags"
+        android:text="@string/fragment_searchNotes_placeholder_frequent_tags"
         android:textColor="@color/colorToolbarTitle" />
 
     <android.support.v7.widget.RecyclerView
@@ -27,7 +27,7 @@
         android:layout_below="@+id/recycler_view"
         android:layout_marginTop="5sp"
         android:clickable="true"
-        android:text="MORE"
+        android:text="@string/fragment_searchNotes_placeholder_more"
         android:textColor="@color/colorToolbarTitle" />
 
     <RelativeLayout
@@ -52,8 +52,17 @@
             android:layout_below="@+id/separator"
             android:layout_marginBottom="5sp"
             android:layout_marginTop="2sp"
-            android:text="Search Results"
+            android:text="@string/fragment_searchNotes_placeholder_search_results"
             android:textColor="@color/colorToolbarTitle" />
+
+        <TextView
+            android:id="@+id/textViewPlaceholderSearchResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/fragment_searchNotes_placeholder_empty_search"
+            android:textColor="@color/colorPrimaryDark"
+            android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_search_results"
