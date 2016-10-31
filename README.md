@@ -55,6 +55,7 @@ As of now, Rivisto is barebones, with an incomplete UI but fairly stable feature
 - Note categorization by Tag.
 - Searching for note(s).
 - Auto generation of note title based on note content.
+- Always sync'd notes (if you're offline, notes are sync'd once device is back online).
 
 #Interested In Contributing?
 
