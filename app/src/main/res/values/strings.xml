@@ -21,6 +21,7 @@
     <string name="action_view_labels">View Labels</string>
     <string name="action_save_note">Save Note</string>
     <string name="action_delete_note">Delete Note</string>
+    <string name="action_share_note">Share Note</string>
     <string name="apiKey">apiKey</string>
     <string name="messagingSenderID">messagingSenderID</string>
     <string name="databaseURL">databaseURL</string>

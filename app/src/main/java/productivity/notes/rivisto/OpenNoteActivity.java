@@ -1,5 +1,6 @@
 package productivity.notes.rivisto;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -148,6 +149,9 @@ public class OpenNoteActivity extends AppCompatActivity {
                 Toast.makeText(this, "Note deleted permanently", Toast.LENGTH_SHORT).show();
                 finish();
                 break;
+            case R.id.action_share_note:
+                shareNote();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -164,7 +168,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         // Check if title is left empty
         if (title.isEmpty()) {
             // Check if content of note is empty
-            if (content.isEmpty()){
+            if (content.isEmpty()) {
                 // Show error message and do not save the note
                 Snackbar.make(coordinatorLayout, "Empty note cannot be saved", Snackbar.LENGTH_SHORT).show();
             } else {
@@ -179,7 +183,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         }
     }
 
-    private void saveNote(String title, String content){
+    private void saveNote(String title, String content) {
         String newNoteKey = firebaseRef.push().getKey();
         String label = extractTag(content);
 
@@ -219,7 +223,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         // Use first 5 words of content as note title
 
         StringBuilder stringBuilder = new StringBuilder();
-        for (String word:content.split(" ", 5)) {
+        for (String word : content.split(" ", 5)) {
             stringBuilder.append(word).append(" ");
         }
 
@@ -359,7 +363,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         // Check if title is left empty
         if (title.isEmpty()) {
             // Check if content of note is empty
-            if (content.isEmpty()){
+            if (content.isEmpty()) {
                 // Show error message and do not save the note
                 Snackbar.make(coordinatorLayout, "Empty note cannot be saved", Snackbar.LENGTH_SHORT).show();
             } else {
@@ -374,7 +378,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         }
     }
 
-    private void saveUpdatedNote(String title, String content){
+    private void saveUpdatedNote(String title, String content) {
         String updatedNoteLabel = extractTag(content);
 
         firebaseRef.setValue(
@@ -515,5 +519,28 @@ public class OpenNoteActivity extends AppCompatActivity {
         }
 
         Snackbar.make(coordinatorLayout, confirmationMessage, Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void shareNote() {
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+
+        String shareBodyText = noteContent.getText().toString().trim();
+
+        if (isNoteContentAvailable(shareBodyText)){
+            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
+
+            startActivity(Intent.createChooser(sharingIntent, "Shearing Option"));
+        } else {
+            Snackbar.make(coordinatorLayout, "Nothing to share!", Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isNoteContentAvailable(String content){
+        if (content.isEmpty() || content.equalsIgnoreCase("")){
+            return false;
+        } else {
+            return true;
+        }
     }
 }

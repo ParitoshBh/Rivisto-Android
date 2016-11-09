@@ -5,13 +5,20 @@
     <item
         android:id="@+id/action_save_note"
         android:icon="@drawable/ic_done_black_24dp"
-        android:orderInCategory="100"
+        android:orderInCategory="10"
         android:title="@string/action_save_note"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_delete_note"
         android:icon="@drawable/ic_delete_white_24dp"
-        android:orderInCategory="100"
+        android:orderInCategory="20"
         android:title="@string/action_delete_note"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/action_share_note"
+        android:actionProviderClass="android.widget.ShareActionProvider"
+        android:icon="@drawable/ic_share_black_24dp"
+        android:orderInCategory="30"
+        android:title="@string/action_share_note"
+        app:showAsAction="ifRoom" />
 </menu>
