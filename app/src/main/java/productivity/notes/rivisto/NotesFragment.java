@@ -145,14 +145,16 @@ public class NotesFragment extends Fragment {
             RecyclerView.AdapterDataObserver dataObserver = new RecyclerView.AdapterDataObserver() {
                 @Override
                 public void onItemRangeInserted(int positionStart, int itemCount) {
-                    //Log.i(LOG_DATA_OBSERVER, "Items - " + adapter.getItemCount());
+                    //Log.i(LOG_DATA_OBSERVER, "Items count - " + adapter.getItemCount() + " -- position start - " + positionStart);
                     checkEmptyState(adapter.getItemCount());
+                    recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
                 }
 
                 @Override
                 public void onItemRangeRemoved(int positionStart, int itemCount) {
-                    //Log.i(LOG_DATA_OBSERVER, "Items - " + adapter.getItemCount());
+                    //Log.i(LOG_DATA_OBSERVER, "Items count - " + adapter.getItemCount() + " -- position start - " + positionStart);
                     checkEmptyState(adapter.getItemCount());
+                    recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
                 }
             };
 
