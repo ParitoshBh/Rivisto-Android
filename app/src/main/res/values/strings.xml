@@ -36,4 +36,6 @@
     <string name="action_empty_trash">Empty Trash</string>
     <string name="note_title_hint">What\'s note about?</string>
     <string name="note_content_long_hint">\n\nMore about it…\n\n\nTip - Add # before a word to add tag to this note.</string>
+    <string name="alert_dialog_save">Save</string>
+    <string name="alert_dialog_cancel">Cancel</string>
 </resources>

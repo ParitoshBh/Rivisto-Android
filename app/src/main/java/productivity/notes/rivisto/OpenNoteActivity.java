@@ -1,5 +1,7 @@
 package productivity.notes.rivisto;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -555,4 +557,76 @@ public class OpenNoteActivity extends AppCompatActivity {
             return true;
         }
     }
+
+    private boolean isNoteTitleAvailable(String title) {
+        if (title.isEmpty() || title.equalsIgnoreCase("")) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private void showConfirmationDialog(final String title, final String content) {
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage("Note hasn't been saved yet!").setTitle("Save note?");
+
+        // 3. Add the buttons
+        builder.setPositiveButton(R.string.alert_dialog_save, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                if (noteKey.equalsIgnoreCase("null")){
+                    saveNote(title, content);
+                } else {
+                    updateNote();
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+                OpenNoteActivity.super.onBackPressed();
+            }
+        });
+
+        // 4. Get the AlertDialog from create()
+        AlertDialog dialog = builder.create();
+
+        // 5. show the AlertDialog
+        dialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        String title = noteTitle.getText().toString().trim();
+        String content = noteContent.getText().toString().trim();
+
+        if (noteKey.equalsIgnoreCase("null")) {
+            // A new note was attempted to be created
+            //Log.i("OpenNoteActivity", "New note was being created");
+            // Check if there's something to save in note i.e. a title or content
+            if (isNoteTitleAvailable(title) || isNoteContentAvailable(content)) {
+                // If either of them is filled out, then show a notification asking to save the note
+                showConfirmationDialog(title, content);
+            } else {
+                // If nothing is in there, simply follow the back button click
+                super.onBackPressed();
+            }
+        } else {
+            // An existing note was being viewed
+            //Log.i("OpenNoteActivity", "Existing note was being viewed");
+            // Check if the note has been updated i.e. if either title or content has changed
+            if (selectedNoteTitle.equals(title) && selectedNoteContent.equals(content)) {
+                // No need to show confirmation message, simply follow back button click
+                super.onBackPressed();
+            } else {
+                // Show confirmation alert dialog
+                showConfirmationDialog(title, content);
+            }
+        }
+
+    }
+
 }
