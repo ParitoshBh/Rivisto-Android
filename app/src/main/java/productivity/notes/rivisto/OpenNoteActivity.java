@@ -445,7 +445,10 @@ public class OpenNoteActivity extends AppCompatActivity {
                 }
 
                 firebaseRef.removeValue();
-                decrementTagNoteCount(note.getLabel());
+
+                if (!note.getLabel().equals("")) {
+                    decrementTagNoteCount(note.getLabel());
+                }
             }
 
             @Override
@@ -582,7 +585,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         builder.setPositiveButton(R.string.alert_dialog_save, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
-                if (noteKey.equalsIgnoreCase("null")){
+                if (noteKey.equalsIgnoreCase("null")) {
                     saveNote(title, content);
                 } else {
                     updateNote();
