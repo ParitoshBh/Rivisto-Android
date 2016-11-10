@@ -134,7 +134,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                 } else {
                     updateNote();
                 }
-                break;
+                return super.onOptionsItemSelected(item);
             case R.id.action_delete_note:
                 if (isNewNote) {
                     Toast.makeText(this, "Note discarded", Toast.LENGTH_SHORT).show();
@@ -143,23 +143,28 @@ public class OpenNoteActivity extends AppCompatActivity {
                     Toast.makeText(this, "Note trashed", Toast.LENGTH_SHORT).show();
                 }
                 finish();
-                break;
+                return super.onOptionsItemSelected(item);
             case R.id.action_restore_note:
                 restoreNote();
                 Toast.makeText(this, "Note restored", Toast.LENGTH_SHORT).show();
                 finish();
-                break;
+                return super.onOptionsItemSelected(item);
             case R.id.action_permanent_delete_note:
                 permanentlyDeleteNote();
                 Toast.makeText(this, "Note deleted permanently", Toast.LENGTH_SHORT).show();
                 finish();
-                break;
+                return super.onOptionsItemSelected(item);
             case R.id.action_share_note:
                 shareNote();
-                break;
+                return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                //Log.i("OpenNoteActivity", "Home button pressed");
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
-        return super.onOptionsItemSelected(item);
     }
 
     private void updateSelectedNoteValues(String title, String content, String label) {
@@ -587,6 +592,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         builder.setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User cancelled the dialog
+                dialog.dismiss();
                 OpenNoteActivity.super.onBackPressed();
             }
         });
