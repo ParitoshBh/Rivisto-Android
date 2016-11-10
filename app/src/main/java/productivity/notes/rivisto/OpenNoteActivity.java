@@ -28,7 +28,7 @@ public class OpenNoteActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private EditText noteTitle, noteContent;
     private CoordinatorLayout coordinatorLayout;
-    private String noteKey, noteLookup, selectedNoteLabel, userKey;
+    private String noteKey, noteLookup, selectedNoteLabel, userKey, selectedNoteTitle, selectedNoteContent;
     private static final String NOTE_CREATED = "Created", NOTE_UPDATED = "Updated";
     private boolean isNewNote;
 
@@ -47,6 +47,9 @@ public class OpenNoteActivity extends AppCompatActivity {
         noteKey = getIntent().getStringExtra("key");
         noteLookup = getIntent().getStringExtra("lookup");
         userKey = getIntent().getStringExtra(getString(R.string.userKey));
+
+        // Initialize selected note value with empty string
+        selectedNoteTitle = selectedNoteContent = selectedNoteLabel = "";
 
         //Log.i("USER KEY", userKey);
 
@@ -92,7 +95,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                     Note note = dataSnapshot.getValue(Note.class);
                     noteTitle.setText(note.getTitle());
                     noteContent.setText(note.getContent());
-                    selectedNoteLabel = note.getLabel();
+                    updateSelectedNoteValues(note.getTitle(), note.getContent(), note.getLabel());
                 }
 
                 @Override
@@ -157,6 +160,12 @@ public class OpenNoteActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void updateSelectedNoteValues(String title, String content, String label) {
+        selectedNoteTitle = title;
+        selectedNoteContent = content;
+        selectedNoteLabel = label;
+    }
+
     private void createNewNote() {
         String title = noteTitle.getText().toString().trim();
         String content = noteContent.getText().toString().trim();
@@ -201,7 +210,7 @@ public class OpenNoteActivity extends AppCompatActivity {
         // Update note key to newly created note key
         noteKey = newNoteKey;
 
-        selectedNoteLabel = label;
+        updateSelectedNoteValues(title, content, label);
 
         // Update isNewNote boolean. Note isn't a new one anymore.
         isNewNote = false;
@@ -213,8 +222,8 @@ public class OpenNoteActivity extends AppCompatActivity {
             firebaseRef = firebaseDatabase.getReference(userKey + "/notes/" + noteKey);
         }
 
-        // Add tag to database is it is not null i.e. there is a tag present
-        if (label != null) {
+        // Add tag to database is it is not empty i.e. there is a tag present
+        if (!label.equals("")) {
             incrementTagNoteCount(label);
         }
     }
@@ -268,11 +277,7 @@ public class OpenNoteActivity extends AppCompatActivity {
                         noteCount += tagObj.getNoteCount();
                     }
 
-                    firebaseDatabase.getReference(userKey + "/tags/" + tag).setValue(
-                            new Tag(
-                                    noteCount
-                            )
-                    );
+                    firebaseDatabase.getReference(userKey + "/tags/" + tag).setValue(new Tag(noteCount));
 
                 }
 
@@ -343,11 +348,11 @@ public class OpenNoteActivity extends AppCompatActivity {
     }
 
     private void adjustTagNoteCount(String oldLabel, String newLabel) {
-        if (oldLabel != null) {
+        if (!oldLabel.equals("")) {
             decrementTagNoteCount(oldLabel);
         }
 
-        if (newLabel != null) {
+        if (!newLabel.equals("")) {
             incrementTagNoteCount(newLabel);
         }
     }
@@ -360,22 +365,29 @@ public class OpenNoteActivity extends AppCompatActivity {
         // Note title cannot be empty
         // If content is there and no title is entered, title is generated from content
 
-        // Check if title is left empty
-        if (title.isEmpty()) {
-            // Check if content of note is empty
-            if (content.isEmpty()) {
-                // Show error message and do not save the note
-                Snackbar.make(coordinatorLayout, "Empty note cannot be saved", Snackbar.LENGTH_SHORT).show();
+        // Check if anything has changed at all, proceed if required
+        if (selectedNoteTitle.equals(title) && selectedNoteContent.equals(content)) {
+            // No need to update anything, show a message
+            Snackbar.make(coordinatorLayout, "Note is up to date", Snackbar.LENGTH_SHORT).show();
+        } else {
+            // Check if title is left empty
+            if (title.isEmpty()) {
+                // Check if content of note is empty
+                if (content.isEmpty()) {
+                    // Show error message and do not save the note
+                    Snackbar.make(coordinatorLayout, "Empty note cannot be saved", Snackbar.LENGTH_SHORT).show();
+                } else {
+                    // Use first 5 words of content as title
+                    title = generateTitleFromContent(content);
+                    // Show title in note
+                    noteTitle.setText(title);
+                    saveUpdatedNote(title, content);
+                }
             } else {
-                // Use first 5 words of content as title
-                title = generateTitleFromContent(content);
-                // Show title in note
-                noteTitle.setText(title);
                 saveUpdatedNote(title, content);
             }
-        } else {
-            saveUpdatedNote(title, content);
         }
+
     }
 
     private void saveUpdatedNote(String title, String content) {
@@ -391,11 +403,11 @@ public class OpenNoteActivity extends AppCompatActivity {
 
         showConfirmationMessage(NOTE_UPDATED);
 
-        if (updatedNoteLabel != selectedNoteLabel) {
+        if (!updatedNoteLabel.equals(selectedNoteLabel)) {
             adjustTagNoteCount(selectedNoteLabel, updatedNoteLabel);
         }
 
-        selectedNoteLabel = updatedNoteLabel;
+        updateSelectedNoteValues(title, content, updatedNoteLabel);
     }
 
     private void moveNoteToTrash() {
@@ -485,7 +497,7 @@ public class OpenNoteActivity extends AppCompatActivity {
 
     private String extractTag(String noteContent) {
         String contentWords[] = noteContent.split(" ");
-        String label = null;
+        String label = "";
 
         for (String word : contentWords) {
             if (word.startsWith("#") && (word.length() > 1)) {
@@ -527,7 +539,7 @@ public class OpenNoteActivity extends AppCompatActivity {
 
         String shareBodyText = noteContent.getText().toString().trim();
 
-        if (isNoteContentAvailable(shareBodyText)){
+        if (isNoteContentAvailable(shareBodyText)) {
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
 
             startActivity(Intent.createChooser(sharingIntent, "Shearing Option"));
@@ -536,8 +548,8 @@ public class OpenNoteActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isNoteContentAvailable(String content){
-        if (content.isEmpty() || content.equalsIgnoreCase("")){
+    private boolean isNoteContentAvailable(String content) {
+        if (content.isEmpty() || content.equalsIgnoreCase("")) {
             return false;
         } else {
             return true;
