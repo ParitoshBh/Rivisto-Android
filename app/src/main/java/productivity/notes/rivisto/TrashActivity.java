@@ -25,6 +25,7 @@ import productivity.notes.rivisto.utils.Helpers;
 
 public class TrashActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
     private FirebaseDatabase firebaseDatabase;
     private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
     private DatabaseReference firebaseRef;
@@ -45,11 +46,15 @@ public class TrashActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         placeholderTrash = (ImageView) findViewById(R.id.placeholderTrash);
 
+        linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+
         userKey = this.getIntent().getStringExtra(getString(R.string.userKey));
 
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(linearLayoutManager);
 
         if (userKey == null) {
             FirebaseApp firebaseApp = FirebaseApp.getInstance("Firebase");

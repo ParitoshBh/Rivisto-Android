@@ -27,6 +27,7 @@ public class NotesFragment extends Fragment {
     private DatabaseReference firebaseRef;
     private FirebaseRecyclerAdapter<Note, NoteHolder> adapter;
     private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
     private ImageView imagePlaceholder;
     private ProgressBar progressBar;
     private String userKey;
@@ -50,6 +51,11 @@ public class NotesFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         imagePlaceholder = (ImageView) view.findViewById(R.id.imagePlaceholderEmptyNotes);
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
 
         final Bundle bundle = this.getArguments();
         userKey = bundle.getString(getString(R.string.userKey));
@@ -106,7 +112,7 @@ public class NotesFragment extends Fragment {
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            recyclerView.setLayoutManager(linearLayoutManager);
         }
 
         @Override
